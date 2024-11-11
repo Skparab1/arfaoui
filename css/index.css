@@ -352,13 +352,12 @@ nav {
   text-align: center;
   max-height: 270px;
   overflow: scroll;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  overflow-x: hidden;
+  /* -ms-overflow-style: none;
+  scrollbar-width: none;  Firefox */
 }
 
-.codestatementholder:-webkit-scrollbar {
-  display: none;
-}
+
 
 .blockreceiver {
   width: 60%;

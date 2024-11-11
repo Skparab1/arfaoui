@@ -21,11 +21,11 @@ function drawlist(lst){
 
     treeholder.innerHTML = "";
 
-    startx = 100;
+    let startx = 100;
 
-    starty = 10;
+    let starty = 10;
 
-    i = 0;
+    let i = 0;
     while (i < lst.length){
 
         drawnode(lst, i, startx, starty);
@@ -363,14 +363,14 @@ function drop(ev) {
         ev.target.innerHTML = ""; // reset it we can already assume there is nothing in it cuz we checked for that
         ev.target.appendChild(document.getElementById(data));
 
-        droppedid = parseInt(data.replace("drag",""));
+        let droppedid = parseInt(data.replace("drag",""));
         console.log("dropped ",data, " into ",droppedid);
 
         codeel = get(data);
-        indata1 = String(codeel.innerHTML);
+        let indata1 = String(codeel.innerHTML);
 
-        type = ""
-        repopulatet = 0;
+        let type = ""
+        let repopulatet = 0;
         if (indata1.includes("lst[")){
             type = "index";
             repopulatet = 0;
@@ -385,21 +385,32 @@ function drop(ev) {
             repopulatet = 3;
         }
 
-        inputpossible = indata1.split('<input class="littleinput" id="');
+        let inputpossible = indata1.split('<input class="littleinput" id="');
         
-        accountedinputs = [];
-        i = 1
+        // console.log("step1", get("littleinput0").value, get("littleinput1").value);
+
+        let accountedinputs = [];
+        let i = 1
         while (i < inputpossible.length){
             crrnt = inputpossible[i].split('" oninput="checkinput')[0];
             accountedinputs.push(crrnt);
             i += 1;
         }
 
+        // console.log("step2", get("littleinput0").value, get("littleinput1").value);
+
+
         currentcode[droppedid] = [boxid,type,accountedinputs];
 
         console.log(currentcode);
 
+        // console.log("step3", get("littleinput0").value, get("littleinput1").value);
+
+
         repopulateall();
+
+        // console.log("step4", get("littleinput0").value, get("littleinput1").value);
+
     }
 }
 
@@ -448,10 +459,16 @@ function repopulateall(){
 }
 
 function repopulate(i){
-    el = document.getElementById("receiver"+i);
+    let el = document.getElementById("receiver"+i);
+    // console.log("loggy beeny", el.innerHTML.includes("div"));
+
+    if (el.innerHTML.includes("div")){
+        // alert("just leave");
+        return; // just leave
+    }
 
     el.innerHTML = `
-    <div id="drag${elfar}" class="command" draggable="true" droppable="false" ondragstart="lastdragnestable=false; drag(event)">
+    <div id="drag${elfar}" class="command" draggable="true" droppable="false" ondragstart="lastdragnestable=false; drag(event);">
     ${getstatementbank(i)}
     </div>
     `;
@@ -461,8 +478,8 @@ function repopulate(i){
 
 function deletereceiver(id){
     // first check if you even can
+
     if (elfar <= 4){
-        // abort;
         return;
     }
 
@@ -471,9 +488,9 @@ function deletereceiver(id){
 
     // currentcode[] = ""
 
-    el = get("blockreceiver"+id);
+    let el = get("blockreceiver"+id);
 
-    getel1 = String(el.innerHTML);
+    let getel1 = String(el.innerHTML);
 
     // console.log("deller1"+getel1);
 
@@ -498,7 +515,16 @@ function deletereceiver(id){
 }
 
 function adddropblock(){
-    document.getElementById("currentcode").innerHTML += `
+    // try{
+    //     console.log("step5", get("littleinput0").value, get("littleinput1").value);
+    // } catch {
+
+    // }
+
+    div1 = document.createElement('div');
+
+
+    div1.innerHTML += `
         <div    class="blockreceiver"
                 style="margin-left: 25px" 
                 id="blockreceiver${f1statements}" 
@@ -521,10 +547,336 @@ function adddropblock(){
                 aria-dropeffect="copy"
         ></div>
         <div class="deletereceiver" id="blockdeletebutton${f1statements}" onclick="deletereceiver(${f1statements})">Delete</div>`;
+
+    let cc = document.getElementById("currentcode");
+    cc.appendChild(div1);
+
+    cc.scrollTo({
+        top: cc.offsetHeight,
+        left: 0,
+        behavior: "smooth",
+      });
+      
+
     
+    // try{
+    //     console.log("step6", get("littleinput0").value, get("littleinput1").value);
+    // } catch {
+        
+    // }
+
     currentcode.push("");
+
+    // try{
+    //     console.log("step7", get("littleinput0").value, get("littleinput1").value);
+    // } catch {
+        
+    // }
     f1statements += 1;
 }
+
+function resetreceiverglows(){
+    // use currentcode
+
+    let i = 0;
+    while (i < currentcode.length){
+        if ((typeof currentcode[i] !== 'undefined') && currentcode[i] != ""){
+            let thisid = currentcode[i][0];
+            let tel = get("blockreceiver"+thisid);
+            tel.style.border = "2px dashed rgb(209, 209, 209)";
+        }
+        i += 1;
+    }
+}
+
+function glowreceiveryellow(id) {
+    let el = get("blockreceiver"+id);
+    el.style.border = " 3px solid rgba(220,220,25,0.5)";
+}
+
+function glownodeyellow(id) {
+    console.log("glownode",id);
+    let el = get("thenode"+id);
+    el.style.boxShadow = '7px 7px 5px rgba(255, 0, 0, 0.7)';
+}
+
+function glowreceiver(id) {
+    let el = get("blockreceiver"+id);
+    el.scrollIntoView();
+    el.style.border = " 3px solid rgba(220,0,25,0.5)";
+}
+
+function getnextstatement(alreadyrun){
+    let i = 0;
+
+    let lowesti = 10000;
+    let lowestdata = [];
+
+    while (i < currentcode.length){
+        if ((typeof currentcode[i] !== 'undefined') && currentcode[i] != ""){
+            if (currentcode[i][0] <= lowesti && !alreadyrun.includes(currentcode[i][0])){
+                lowesti = currentcode[i][0];
+                lowestdata = currentcode[i];
+            }
+        }
+        i += 1
+    }
+
+    return lowestdata;
+}
+
+function runall(){
+    resetreceiverglows();
+
+    let runallctr = 0;
+    
+    let runsofar = [];
+
+    let errorscount = 0;
+
+    while (runallctr < currentcode.length){
+        let datanow = getnextstatement(runsofar);
+        runsofar.push(datanow[0]);
+
+        if ((typeof datanow !== 'undefined') && datanow != ""){
+            console.log(currentcode)
+            let cd;
+            if (datanow[1] == "index"){
+                cd = runindex(datanow);
+            } else if (datanow[1] == "append"){
+                cd = runappend(datanow);
+            } else if (datanow[1] == "insert"){
+                cd = runinsert(datanow);
+            } else if (datanow[1] == "pop"){
+                cd = runpop(datanow);
+            }
+            if (cd == 1){
+                // something errored
+                errorscount += 1;
+                console.log("errored on ", datanow[0]);
+                glowreceiver(datanow[0]);
+            }
+        }
+        // console.log("ranone",datanow,currentcode);
+        runallctr += 1;
+    }
+
+    let ntf = get("runnotif");
+    ntf.textContent = "Finished running with "+errorscount+" error(s).";
+
+    drawlist(univlst);
+}
+
+async function animrunall(){
+    stepinsession = true;
+    while (stepinsession){
+        stepforward();
+        await sleep(get("waittime").value);
+    }
+}
+
+
+let stepinsession = false;
+let stepctr = 0;
+let numactuallyrun = 0;
+let stepsofar = [];
+
+function stepforward(){
+    resetreceiverglows();
+    if (!stepinsession){
+        stepctr = 0;
+        stepsofar = [];
+    }
+    stepinsession = true;
+
+    let datanow = getnextstatement(stepsofar);
+    stepsofar.push(datanow[0]);
+
+    succeeded = false;
+
+    if (get("blockreceiver"+datanow[0]) == null){
+        stepctr = 0;
+        numactuallyrun = 0;
+        stepsofar = [];
+        stepinsession = false;
+
+        let ntf = get("runnotif");
+        ntf.textContent = "Finished running.";
+        return;
+    }
+
+
+    glowreceiveryellow(datanow[0]);
+
+    if ((typeof datanow !== 'undefined') && datanow != ""){
+        console.log(currentcode)
+        let cd;
+        if (datanow[1] == "index"){
+            cd = runindex(datanow);
+        } else if (datanow[1] == "append"){
+            cd = runappend(datanow);
+        } else if (datanow[1] == "insert"){
+            cd = runinsert(datanow);
+        } else if (datanow[1] == "pop"){
+            cd = runpop(datanow);
+        }
+        if (cd == 1){
+            // something errored
+            console.log("errored on ", datanow[0]);
+            glowreceiver(datanow[0]);
+        }
+        numactuallyrun += 1;
+        succeeded = true;
+    }
+    // console.log("ranone",datanow,currentcode);
+    stepctr += 1;
+
+    if (!succeeded){
+        stepforward();
+    }
+
+    let ntf = get("runnotif");
+    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-4)+".";
+    if (get("blockreceiver"+datanow[0]) == null){
+        stepctr = 0;
+        numactuallyrun = 0;
+        stepsofar = [];
+        stepinsession = false;
+
+        let ntf = get("runnotif");
+        ntf.textContent += "\nFinished running.";
+        return;
+    }
+}
+
+
+
+function runindex(data){
+    if (data[1] != "index"){
+        alert("Internal error: wrong runner called for index, code type was ",data[1]);
+        return 1;
+    }
+
+    let values = data[2];
+
+    // there should be two values
+    let index = parseInt(get(values[0]).value);
+
+    if (isNaN(index)){
+        alert("ValueError: Index must be of type Int");
+        return 1;
+    }
+
+    let value1 = get(values[1]).value;
+
+    if (index >= univlst.length){
+        alert("IndexError: List Index out of Range");
+        return 1;
+    }
+
+    if (index < 0){
+        index = univlst.length+index;
+    }
+
+    univlst[index] = value1;
+
+    drawlist(univlst);
+
+    glownodeyellow(index);
+
+    return 0;
+}
+
+function runappend(data){
+    if (data[1] != "append"){
+        alert("Internal error: wrong runner called for index, code type was ",data[1]);
+        return 1;
+    }
+
+    let values = data[2];
+
+    // there should be one values
+    let value1 = get(values[0]).value;
+
+    univlst.push(value1);
+
+    drawlist(univlst);
+
+    glownodeyellow(univlst.length-1);
+
+    return 0;
+}
+
+function runinsert(data){
+    if (data[1] != "insert"){
+        alert("Internal error: wrong runner called for index, code type was ",data[1]);
+        return 1;
+    }
+
+    let values = data[2];
+
+    // there should be two values
+    let index = parseInt(get(values[0]).value);
+    let value1 = get(values[1]).value;
+
+    if (isNaN(index)){
+        alert("ValueError: Index must be of type Int");
+        return 1;
+    }
+
+    if (index >= univlst.length){
+        alert("IndexError: List Index out of Range");
+        return 1;
+    }
+
+    if (index < 0){
+        index = univlst.length+index;
+    }
+
+    univlst.splice(index,0,value1);
+
+    drawlist(univlst);
+
+    glownodeyellow(index);
+
+    return 0;
+}
+
+function runpop(data){
+    if (data[1] != "pop"){
+        alert("Internal error: wrong runner called for index, code type was ",data[1]);
+        return 1;
+    }
+
+    let values = data[2];
+
+    // there should be two values
+    let index = parseInt(get(values[0]).value);
+
+
+    if (isNaN(index)){
+        alert("ValueError: Index must be of type Int");
+        return 1;
+    }
+
+    if (index >= univlst.length){
+        alert("IndexError: List Index out of Range");
+        return 1;
+    }
+
+    if (index < 0){
+        index = univlst.length+index;
+    }
+
+    univlst.splice(index, 1);
+
+    drawlist(univlst);
+
+    glownodeyellow(index-1);
+
+    return 0;
+}
+
 
 
 
@@ -562,16 +914,16 @@ let univlst = [1,2,3,4,5];
 
 drawlist(univlst);
 
-elfar = 0;
-inputnums = -1;
+let elfar = 0;
+let inputnums = -1;
 
 function getlittleinput(){
     inputnums += 1;
-    return `<input class="littleinput" id="littleinput${inputnums}" oninput="checkinput('littleinput${inputnums}');" type="text" value="0">`;
+    return `<input class="littleinput" id="littleinput${inputnums}" oninput="checkinput('littleinput${inputnums}');" onclick="get('littleinput${inputnums}').select();" type="text" value="0">`;
 }
 
 function checkinput(id){
-    inp = get(id);
+    let inp = get(id);
     inp.style.width = 12*(String(inp.value).length) + "px";
     if ((String(inp.value).length) <= 1){
         inp.style.width = "15px";
@@ -582,7 +934,7 @@ function checkinput(id){
     }
 }
 
-torepopulate = 0;
+let torepopulate = 0;
 
 
 function getstatementbank(i){
@@ -604,26 +956,26 @@ statements = [
     `lst.pop(${getlittleinput()})`
 ];
 
-f1statements = 0;
+let f1statements = 0;
 
-currentcode = [];
+let currentcode = [];
 
 adddropblock();
 
 
 
-j = 0;
-while (j < statements.length){
-    adddraggable(j);
-    j += 1;
+jiniter= 0;
+while (jiniter < statements.length){
+    adddraggable(jiniter);
+    jiniter += 1;
 }
 
 
 
 
-if (localStorage.getItem("skpbinarytreeft") == null){
-    // openel('instructions'); openscreen();
-    localStorage.setItem("skpbinarytreeft", "opened");
+if (localStorage.getItem("dsvislists") == null){
+    openel('instructions'); openscreen();
+    localStorage.setItem("dsvislists", "opened");
 }
     
 

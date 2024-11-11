@@ -62,9 +62,10 @@
         </div>
         <div class="quarterleft" id="codebank" style="text-align: center;">
           <h2>Run Controls</h2>
-          <div class="coolbuttonrun">Run All</div>
-          <div class="coolbuttonrun">Animate Run All</div>
-          <div class="coolbuttonrun">Step</div>
+          <div class="coolbuttonrun" onclick="runall();">Run All</div>
+          <div class="coolbuttonrun" onclick="animrunall();">Slowly Run All</div>
+          <div class="coolbuttonrun" onclick="stepforward();">Step</div>
+          <h2 id="runnotif" class="color: var(--main);"></h2>
         </div>
       </div>
 
@@ -81,15 +82,9 @@
         <span class="slider round"></span>
       </label>
 
-      <h3 style="font-size: 15px; margin-bottom: 5px; margin-top: 0px;" id="lines">Lines: (Cornered)</h3>
-      <label class="switch" onclick="toggleangle();">
-        <input type="checkbox">
-        <span class="slider round"></span>
-      </label>
-
-      <h3 style="font-size: 15px; margin-bottom: 0px; margin-top: 0px;" id="animwait">Light-up animation delay time: 500ms</h3>
+      <h3 style="font-size: 15px; margin-bottom: 0px; margin-top: 0px;" id="animwait">Light-up animation delay time: 1500ms</h3>
       <div class="slide2container" style="margin-top: -20px;">
-        <input type="range" min="100" max="2000" value="500" step="10" class="slider2" name="waittime" id="waittime" onchange="document.getElementById('animwait').textContent = 'Light-up animation delay time: '+document.getElementById('waittime').value+'ms'; localStorage.setItem('btspeed',document.getElementById('waittime').value);">
+        <input type="range" min="100" max="5000" value="1500" step="10" class="slider2" name="waittime" id="waittime" onchange="document.getElementById('animwait').textContent = 'Light-up animation delay time: '+document.getElementById('waittime').value+'ms'; localStorage.setItem('btspeed',document.getElementById('waittime').value);">
       </div>
 
       <div class="close" onclick="closeprefs(); closescreen();">Close</div>
@@ -120,12 +115,12 @@
 
     <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
       <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
-      <h5 style='font-size: 15px; margin: 10px;'>1. Construct a binary tree using the left/right buttons to add nodes and delete button to remove nodes or press "random tree" to generate a random tree.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>2. Type in guesses for results in output box at the bottom of your screen</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>3. Click "check answers" or "view solutions" to verify</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>4. Click "Light-up animation" to see light up animations of traversal</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>5. Click "Reset Tree" to start over</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>6. Click "Share Tree" share your tree with someone else</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>1. Modify the list using the left/right buttons to add elements and delete button to remove elements.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>2. Drag blocks of code from the code bank to the current code.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>3. Click the digits in blue to change the function inputs.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>4. Press run all to run all the code instantly.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>5. Press slowly run all to run the code with delays between each block.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>6. Press step to run one one block of code at a time.</h5>
       <div class="close" onclick="closeinstructions(); closescreen();">Close</div>
     </div>
 
