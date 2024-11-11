@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='og:viewport' content='width=device-width,initial-scale=1'>
+    <meta name="og:description" content="Data Structures Visualizer">
+    <title>Data Structures Visualizer</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Finlandica&display=swap" rel="stylesheet"> 
+  </head>
+  <body>
+    <nav id="nav1">
+      <ul class="nav-items navleft">
+        <li class="headername">Data Structures Visualizer</li>
+      </ul>
+       
+      <ul class="nav-items navright">
+        <li title="Settings"><a onclick="openprefs(); openscreen();"><img src="assets/settings.png" height="30px" class="logo"></a></li>
+        <li title="Help"><a onclick="openel('instructions'); openscreen();" ><img src="assets/help.png" height="30px" class="logo" style="cursor: help;"></a></li>
+        <li title="Report bug"><a href="https://github.com/skparab1/binarytree/issues/new" target="_blank"><img src="assets/reportbuggy.png" height="30px" class="logo"></a></li>
+      </ul>
+    </nav>
+
+    <div class="fullwidth">
+        <h1 id='head' style="font-size: 50px; color: rgba(0,0,0,0);">e</h1>
+    </div>
+
+    <div id="screen" class="screen"></div>
+    
+
+    <div class="largenotif" id="solutions">
+      <!-- warning: everything inside of this is overwritten by js function checkall. do not change this -->
+      <h1>Solutions</h1>
+      <h5 id="preordersol">Pre order: </h5>
+      <h5 id="inordersol">In order: </h5>
+      <h5 id="postordersol">Post order: </h5>
+      <div class="close" onclick="closesolutions();">Close</div>
+    </div>
+
+    <div class="largenotif" id="preferences" style="height: fit-content;">
+      <h1 style="font-size: 25px;">Settings</h1>
+      <h3 style="font-size: 15px; margin-bottom: 5px; margin-top: 0px;" id="theme">Theme: (Dark)</h3>
+      <label class="switch" onclick="toggletheme();">
+        <input type="checkbox">
+        <span class="slider round"></span>
+      </label>
+
+      <h3 style="font-size: 15px; margin-bottom: 5px; margin-top: 0px;" id="lines">Lines: (Cornered)</h3>
+      <label class="switch" onclick="toggleangle();">
+        <input type="checkbox">
+        <span class="slider round"></span>
+      </label>
+
+      <h3 style="font-size: 15px; margin-bottom: 0px; margin-top: 0px;" id="animwait">Light-up animation delay time: 500ms</h3>
+      <div class="slide2container" style="margin-top: -20px;">
+        <input type="range" min="100" max="2000" value="500" step="10" class="slider2" name="waittime" id="waittime" onchange="document.getElementById('animwait').textContent = 'Light-up animation delay time: '+document.getElementById('waittime').value+'ms'; localStorage.setItem('btspeed',document.getElementById('waittime').value);">
+      </div>
+
+      <div class="close" onclick="closeprefs(); closescreen();">Close</div>
+    </div>
+
+
+    <div class="largenotif" id="randomtree" style="height: min-content; top: 15%;">
+
+      <h1 style="margin-bottom: 0px; font-size: 25px;">Generate random tree</h1>
+
+      <h3 style="margin-bottom: 0px; font-size: 25px;">Max number of levels</h3>
+      <select class='guess' name="numnodes" id="numnodes" onchange="initnums();">
+        <option value=2>2</option>
+        <option value=3>3</option>
+        <option value=4>4</option>
+        <option value=5>5</option>
+      </select>
+
+      <h3 style="margin-bottom: 0px; font-size: 25px;">Tree type</h3>
+      <select class='guess' name="treetype" id="treetype" onchange="localStorage.setItem('treetype',document.getElementById('treetype').value);">
+        <option value="alpha">Alphabetical</option>
+        <option value="numeric">Numerical</option>
+        <option value="rand">Random</option>
+      </select>
+      <div class="close" onclick="closeel('randomtree'); closescreen(); root = randtree(); redrawtree();">Generate</div>
+      <div class="close" onclick="closeel('randomtree'); closescreen();">Cancel</div>
+    </div>
+
+    <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
+      <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
+      <h5 style='font-size: 15px; margin: 10px;'>1. Construct a binary tree using the left/right buttons to add nodes and delete button to remove nodes or press "random tree" to generate a random tree.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>2. Type in guesses for results in output box at the bottom of your screen</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>3. Click "check answers" or "view solutions" to verify</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>4. Click "Light-up animation" to see light up animations of traversal</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>5. Click "Reset Tree" to start over</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>6. Click "Share Tree" share your tree with someone else</h5>
+      <div class="close" onclick="closeinstructions(); closescreen();">Close</div>
+    </div>
+
+    <div class="largenotif" id="sharetree" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
+      <h1 style='font-size: 25px; margin: 10px;'>Share Tree</h1>
+
+      <h5 style='font-size: 15px; margin: 18px;'>Send the following URL to someone to share your tree with them.</h5>
+
+      <div id="copysharelink" class="coolbutton" onclick="copyshare()">Copy link</div>
+      
+      <h5 id="shareurldisp" style='font-size: 20px; margin: 15px; padding: 10px; border-radius: 25px; color: var(--main); background-color: var(--bg);'></h5>
+
+      <div class="close" onclick="closeel('sharetree'); closescreen();">Close</div>
+    </div>
+
+
+
+    <!-- <img class="standaloneicon" id="x1" src="assets/redx.png" height="75px" alt="large red x">
+    <img class="standaloneicon" id="x2" src="assets/redx.png" height="75px" alt="large red x">
+    <img class="standaloneicon" id="x3" src="assets/redx.png" height="75px" alt="large red x">
+    <img class="standaloneicon" id="check1" src="assets/greencheck.png" height="75px" alt="green check">
+    <img class="standaloneicon" id="check2" src="assets/greencheck.png" height="75px" alt="green check">
+    <img class="standaloneicon" id="check3" src="assets/greencheck.png" height="75px" alt="green check"> -->
+    <script src="js/index.js"></script>
+
+  </body>
+</html>
