@@ -46,13 +46,9 @@
     </div>
 
 
-    <div id='res' class="results" onmouseenter="raiseresults();" onmouseleave="lowerresults();">
-      <button class="exit-modal" onclick="if (!stayingup){ raiseresults(); stayingup = true; document.getElementById('sb').textContent = 'Unlock movement';} else {stayingup = false; document.getElementById('sb').textContent = 'Lock movement';}"><p id='sb'>Lock movement</p></button>
-
-      <h1>Code Options</h1>
-
+    <div id='res' class="results">
       <div class="fullwidth">
-        <div class="quarterleft" id="codebank">
+        <div class="quarterleft" id="codebank" style="border-right: 3px solid var(--main);">
           <h2>Code Bank</h2>
         </div>
         <div class="halfleft">
@@ -60,12 +56,12 @@
           <div class="codestatementholder" id="currentcode">
           </div>
         </div>
-        <div class="quarterleft" id="codebank" style="text-align: center;">
+        <div class="quarterleft" id="codebank" style="text-align: center; border-left: 3px solid var(--main); height: 100%;">
           <h2>Run Controls</h2>
           <div id="run1" class="coolbuttonrun" onclick="if (!muted2 && !muted3){runall();}">Run All</div>
           <div id="run2" class="coolbuttonrun" onclick="if (!muted3){mutecontrols2(); animrunall();}">Slowly Run All</div>
           <div id="run3" class="coolbuttonrun" onclick="if (!muted2){mutecontrols3(); stepforward();}">Step</div>
-          <h2 id="runnotif" class="color: var(--main);"></h2>
+          <h2 id="runnotif" class="runnotif"></h2>
         </div>
       </div>
 

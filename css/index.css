@@ -324,6 +324,12 @@ nav {
   width: 25%;
   float: left;
   height: min-content;
+  padding-bottom: 10px;
+}
+
+.runnotif {
+  color: var(--main);
+  height: 70px;
 }
 
 .halfleft {
@@ -382,14 +388,13 @@ nav {
 
 .results{
   position: fixed;
-  top: 70%;
+  bottom: 0%;
   height: min-content;
   width: 100%;
   text-align: center;
   background-color: var(--slight);
-  border: 7px solid var(--main);
   transition: bottom 0.2s, top 0.2s;
-  padding-bottom: 20px;
+  padding-bottom: 0px;
   z-index: 1000;
 }
 
@@ -708,6 +713,10 @@ input:checked + .slider:before {
   display: block;
   background-color: rgb(71, 71, 71);
   border-radius: 5px;
+  height: 50px;
+  width: 66%;
+  margin-left: 16.5%;
+  font-size: 25px;
   color: white;
   transition: background-color 0.25s, opacity 0.25s;
   cursor: pointer;
