@@ -26,7 +26,7 @@
       </ul>
       <ul class="nav-items navright">
         <li title="Settings"><a onclick="openprefs(); openscreen();"><img src="../assets/settings.png" height="30px" class="logo"></a></li>
-        <li title="Help"><a onclick="openel('instructions'); openscreen();" ><img src="../assets/help.png" height="30px" class="logo" style="cursor: help;"></a></li>
+        <li title="Help"><a onclick="openel('instructions'); openscreen();" ><img src="../assets/help.png" height="30px" class="logo"></a></li>
         <li title="Report bug"><a href="https://github.com/skparab1/binarytree/issues/new" target="_blank"><img src="../assets/reportbuggy.png" height="30px" class="logo"></a></li>
       </ul>
     </nav>
@@ -62,9 +62,9 @@
         </div>
         <div class="quarterleft" id="codebank" style="text-align: center;">
           <h2>Run Controls</h2>
-          <div class="coolbuttonrun" onclick="runall();">Run All</div>
-          <div class="coolbuttonrun" onclick="animrunall();">Slowly Run All</div>
-          <div class="coolbuttonrun" onclick="stepforward();">Step</div>
+          <div id="run1" class="coolbuttonrun" onclick="if (!muted2 && !muted3){runall();}">Run All</div>
+          <div id="run2" class="coolbuttonrun" onclick="if (!muted3){mutecontrols2(); animrunall();}">Slowly Run All</div>
+          <div id="run3" class="coolbuttonrun" onclick="if (!muted2){mutecontrols3(); stepforward();}">Step</div>
           <h2 id="runnotif" class="color: var(--main);"></h2>
         </div>
       </div>
@@ -115,12 +115,12 @@
 
     <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
       <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
-      <h5 style='font-size: 15px; margin: 10px;'>1. Modify the list using the left/right buttons to add elements and delete button to remove elements.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>1. Modify the list by hovering over an element and using the "left/right" buttons to add elements and "delete" button to remove elements.</h5>
       <h5 style='font-size: 15px; margin: 10px;'>2. Drag blocks of code from the code bank to the current code.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>3. Click the digits in blue to change the function inputs.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>4. Press run all to run all the code instantly.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>5. Press slowly run all to run the code with delays between each block.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>6. Press step to run one one block of code at a time.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>3. Click the digits in blue to change the list contents and function inputs.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>4. Press "run all" to run all the code instantly.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>5. Press "slowly run all" to run the code with delays between each block.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>6. Press "step" to run one one block of code at a time.</h5>
       <div class="close" onclick="closeinstructions(); closescreen();">Close</div>
     </div>
 

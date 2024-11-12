@@ -62,7 +62,7 @@ function drawnode(lst, index, x, y){
       
     // put the value into the element
     div.innerHTML = `
-    <input id='val${thisnum}' type='text' class='nodeval' value='${lst[index]}' onchange="modvalue(${thisnum});">
+    <input id='val${thisnum}' type='text' class='nodeval' value='${lst[index]}' oninput="modvalue(${thisnum});">
     `;
 
     div.innerHTML += `
@@ -104,6 +104,41 @@ function drawnode(lst, index, x, y){
     treeholder.appendChild(div);
 }
 
+function modvalue(id){
+    elid = get("val"+id);
+    univlst[id] = elid.value;
+}
+
+function resetcontrols(){
+    get("run1").style.opacity = 1;
+    get("run1").style.cursor = "pointer";
+    get("run2").style.opacity = 1;
+    get("run2").style.cursor = "pointer";
+    get("run3").style.opacity = 1;
+    get("run3").style.cursor = "pointer";
+    muted2 = false;
+    muted3 = false;
+}
+
+function mutecontrols2(){
+    get("run1").style.opacity = 0.25;
+    get("run1").style.cursor = "not-allowed";
+    get("run3").style.opacity = 0.25;
+    get("run3").style.cursor = "not-allowed";
+    muted2 = true;
+}
+
+function mutecontrols3(){
+    get("run1").style.opacity = 0.25;
+    get("run1").style.cursor = "not-allowed";
+    get("run2").style.opacity = 0.25;
+    get("run2").style.cursor = "not-allowed";
+    muted3 = true;
+}
+
+muted2 = false;
+muted3 = false;
+
 // put all the tree data into the url
 function createshareURL(){
 
@@ -134,7 +169,7 @@ function lowerresults(){
         return;
     }
     let res = document.getElementById("res");
-    res.style.top = "90%"
+    res.style.top = "70%"
 }
 
 
@@ -428,7 +463,7 @@ function msmoverdeny(id){
 }
 
 function moverout(id){
-    get(id).style.border = "2px dashed rgb(209, 209, 209)";
+    get(id).style.border = "2px dashed rgb(120, 120, 120)";
 }
 
 function moveroutbox(id){
@@ -583,7 +618,7 @@ function resetreceiverglows(){
         if ((typeof currentcode[i] !== 'undefined') && currentcode[i] != ""){
             let thisid = currentcode[i][0];
             let tel = get("blockreceiver"+thisid);
-            tel.style.border = "2px dashed rgb(209, 209, 209)";
+            tel.style.border = "2px dashed rgb(120, 120, 120)";
         }
         i += 1;
     }
@@ -591,18 +626,25 @@ function resetreceiverglows(){
 
 function glowreceiveryellow(id) {
     let el = get("blockreceiver"+id);
-    el.style.border = " 3px solid rgba(220,220,25,0.5)";
+    el.scrollIntoView({ block: 'end',  behavior: 'smooth' });
+    el.style.border = " 3px solid rgba(0,255,100,0.5)";
 }
 
 function glownodeyellow(id) {
-    console.log("glownode",id);
-    let el = get("thenode"+id);
-    el.style.boxShadow = '7px 7px 5px rgba(255, 0, 0, 0.7)';
+
+    try {
+        console.log("glownode",id);
+        let el = get("thenode"+id);
+        el.scrollIntoView({ block: 'end',  behavior: 'smooth' });
+        el.style.boxShadow = '7px 7px 5px rgba(0, 255, 100, 0.7)';
+    } catch (error) {
+        
+    }
 }
 
 function glowreceiver(id) {
     let el = get("blockreceiver"+id);
-    el.scrollIntoView();
+    el.scrollIntoView({ block: 'end',  behavior: 'smooth' });
     el.style.border = " 3px solid rgba(220,0,25,0.5)";
 }
 
@@ -679,6 +721,7 @@ async function animrunall(){
 let stepinsession = false;
 let stepctr = 0;
 let numactuallyrun = 0;
+let totalerrors = 0;
 let stepsofar = [];
 
 function stepforward(){
@@ -686,6 +729,7 @@ function stepforward(){
     if (!stepinsession){
         stepctr = 0;
         stepsofar = [];
+        totalerrors = 0;
     }
     stepinsession = true;
 
@@ -695,13 +739,16 @@ function stepforward(){
     succeeded = false;
 
     if (get("blockreceiver"+datanow[0]) == null){
+
+        let ntf = get("runnotif");
+        ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
+
         stepctr = 0;
         numactuallyrun = 0;
         stepsofar = [];
+        totalerrors = 0;
         stepinsession = false;
-
-        let ntf = get("runnotif");
-        ntf.textContent = "Finished running.";
+        resetcontrols();
         return;
     }
 
@@ -724,6 +771,7 @@ function stepforward(){
             // something errored
             console.log("errored on ", datanow[0]);
             glowreceiver(datanow[0]);
+            totalerrors += 1;
         }
         numactuallyrun += 1;
         succeeded = true;
@@ -741,10 +789,11 @@ function stepforward(){
         stepctr = 0;
         numactuallyrun = 0;
         stepsofar = [];
+        totalerrors = 0;
         stepinsession = false;
 
         let ntf = get("runnotif");
-        ntf.textContent += "\nFinished running.";
+        ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
         return;
     }
 }
@@ -851,7 +900,14 @@ function runpop(data){
     let values = data[2];
 
     // there should be two values
-    let index = parseInt(get(values[0]).value);
+    let index = get(values[0]).value;
+    
+
+    if (String(index).replaceAll(" ","") == ""){
+        index = univlst.length-1;
+    }
+
+    index = parseInt(index);
 
 
     if (isNaN(index)){
@@ -872,7 +928,14 @@ function runpop(data){
 
     drawlist(univlst);
 
-    glownodeyellow(index-1);
+    let glowindex;
+    if (index == 0){
+        glowindex = 0;
+    } else {
+        glowindex = index-1
+    }
+
+    glownodeyellow(glowindex);
 
     return 0;
 }

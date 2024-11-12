@@ -297,7 +297,7 @@ nav {
   margin-left: 5%;
   margin-top: 5px;
   height: 65px;
-  border: 2px dashed var(--contrast);
+  border: 2px dashed var(--bg);
   background-color: rgba(0,0,0,0);
   text-align: center;
   padding: 5px;
@@ -353,8 +353,8 @@ nav {
   max-height: 270px;
   overflow: scroll;
   overflow-x: hidden;
-  /* -ms-overflow-style: none;
-  scrollbar-width: none;  Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 
@@ -364,7 +364,7 @@ nav {
   margin-left: 100%;
   margin-top: 5px;
   height: 65px;
-  border: 2px dashed rgb(209, 209, 209);
+  border: 2px dashed rgb(120, 120, 120);
   background-color: rgba(0,0,0,0);
   text-align: center;
   padding: 5px;
@@ -382,7 +382,7 @@ nav {
 
 .results{
   position: fixed;
-  top: 90%;
+  top: 70%;
   height: min-content;
   width: 100%;
   text-align: center;
@@ -709,7 +709,7 @@ input:checked + .slider:before {
   background-color: rgb(71, 71, 71);
   border-radius: 5px;
   color: white;
-  transition: background-color 0.25s;
+  transition: background-color 0.25s, opacity 0.25s;
   cursor: pointer;
 }
 
