@@ -310,7 +310,7 @@ nav {
   height: 50px;
   background-color: var(--nicedark);
   border: 2px solid var(--main);
-  color: ivory;
+  color: var(--contrast);
   border-radius: 15px;
   padding: 5px;
   padding-top: 10px;
@@ -332,7 +332,7 @@ nav {
 }
 
 .deletereceiver {
-  color: var(--bgslight);
+  color: var(--contrast);
   margin-top: -11px;
   margin-left: 29%;
   width: 65px;
@@ -364,7 +364,7 @@ nav {
   margin-left: 100%;
   margin-top: 5px;
   height: 65px;
-  border: 2px dashed rgb(209, 209, 209);
+  border: 2px dashed var(--slight);
   background-color: rgba(0,0,0,0);
   text-align: center;
   padding: 5px;
