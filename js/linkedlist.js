@@ -973,19 +973,19 @@ function runaddafter(data){
     let index = parseInt(String(get(values[0]).value).replace("<selectednode>", ""));
 
     if (isNaN(index)){
-        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted");
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
     let value1 = get(values[1]).value;
 
     if (index >= univlst.length){
-        alert("ValueError: Node Invalid");
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
     if (index < -1){
-        alert("ValueError: Node Invalid");
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
@@ -1010,19 +1010,19 @@ function runaddbefore(data){
     let index = parseInt(String(get(values[0]).value).replace("<selectednode>", ""));
 
     if (isNaN(index)){
-        alert("ValueError: Node Invalid");
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
     let value1 = get(values[1]).value;
 
     if (index >= univlst.length+1){
-        alert("ValueError: Node Invalid");
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
     if (index < 0){
-        alert("ValueError: Node Invalid");
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
@@ -1103,13 +1103,35 @@ function deletenode(data){
     let values = data[2];
 
     // there should be one value
+
+    if (String(get(values[0]).value).replace("<selectednode>", "") == "<DELETED NODE>"){
+        alert("Error: The node you are trying to reference has been deleted.");
+        return 1;
+    }
+
     let index = parseInt(String(get(values[0]).value).replace("<selectednode>", ""));
 
     univlst.splice(index,1);
 
-    console.log("spliced", index);
+    if (isNaN(index)){
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
+        return 1;
+    }
+
+    if (index >= univlst.length+1){
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
+        return 1;
+    }
+
+    if (index < 0){
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
+        return 1;
+    }
+
 
     recallibratenodes(index-1,-1);
+
+    get(values[0]).value = "<DELETED NODE>";
 
     drawlist(univlst);
 
@@ -1124,9 +1146,9 @@ function recallibratenodes(changedindex, shift){
     while (i < inputnums+1){
         thisinp = get("littleinput"+i);
 
-        vl = thisinp.value;
+        vl = String(thisinp.value);
 
-        if (vl.contains("<selectednode>")){
+        if (vl.includes("<selectednode>")){
 
             vl = parseInt(vl.replace("<selectednode>",""));
 
