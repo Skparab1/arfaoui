@@ -1,4 +1,4 @@
-// DS visualizer: lists
+// DS visualizer: linkedlist
 
 
 // ah how nice it is to touch javascript after so long.
@@ -19,11 +19,18 @@
 
 function drawlist(lst){
 
+    get("connectors").innerHTML = "";
+
     treeholder.innerHTML = "";
 
     let startx = 100;
 
     let starty = 10;
+
+    drawheader(startx, starty);
+    drawrightline(startx+150);
+
+    startx += 150;
 
     let i = 0;
     while (i < lst.length){
@@ -31,8 +38,39 @@ function drawlist(lst){
         drawnode(lst, i, startx, starty);
 
         i += 1;
-        startx += 96;
+        startx += 150;
+
+        drawrightline(startx);
+        drawleftline(startx);
     }
+
+    drawtrailer(startx, starty, i);
+    drawleftline(startx+150);
+
+}
+
+
+function drawrightline(xs){
+    // create the connector line for the left side
+    const div = document.createElement('div');
+    div.className = 'connector';
+    div.style.width = 150+'px';
+    div.style.height = '10px'
+    div.style.left = (xs-150)+'px';
+    div.style.top = (150)+'px';
+    div.style.zIndex = -1;
+    document.getElementById('connectors').appendChild(div);
+}
+
+function drawleftline(xs){
+    const div1 = document.createElement('div');
+    div1.className = 'connector';
+    div1.style.width = 150+'px';
+    div1.style.height = 10+'px'
+    div1.style.left = (xs-300)+'px';
+    div1.style.top = (170)+'px';
+    div1.style.zIndex = -1;
+    document.getElementById('connectors').appendChild(div1);
 }
 
 
@@ -49,6 +87,106 @@ function addright(i){
 function addleft(i){
     univlst.splice(i, 0, 0);
     drawlist(univlst);
+}
+
+
+function drawheader(x, y){
+
+    // create element
+    const div = document.createElement('div');
+
+    // get the value that should be in the node
+      
+    // put the value into the element
+    div.innerHTML = `
+    <input id='val${-1}' type='text' class='nodeval' value='Header'>
+    `;
+
+    div.innerHTML += `
+    
+    <div class="nodecontrols" id='controls${-1}'>
+        <button id='rightadder${-1}' class='nodeadderright' onclick='addright(${-1});'>right</button>
+\    </div>`;
+
+    // position the element
+    div.style.position = 'absolute';
+    div.style.marginLeft = x+'px';
+    div.style.marginTop = y+'px';
+
+    // set the id and classname
+    div.id = 'thenode'+String(-1);
+    div.className = 'node';
+
+
+    // if a node is clicked then bring it to the brong
+    div.onclick = function() {document.getElementById(div.id).style.zIndex = rnzindex; rnzindex += 1; operationwhenclicked(String(-1))};
+
+    div.onmouseover = function() {
+        document.getElementById(div.id.replace("thenode","controls")).style.opacity = 1;
+        document.getElementById(div.id.replace("thenode","val")).style.fontSize = "20px";
+    };
+    div.onmouseout = function() {
+        document.getElementById(div.id.replace("thenode","controls")).style.opacity = 0;
+        document.getElementById(div.id.replace("thenode","val")).style.fontSize = "33px";
+    };
+
+
+    // rnzindex is the z index
+    // this should be the highest for the most recently clicked elements
+    rnzindex += 1;
+
+    // put the element in
+    treeholder.appendChild(div);
+}
+
+
+function drawtrailer(x, y, index){
+
+    // create element
+    const div = document.createElement('div');
+
+    // get the value that should be in the node
+      
+    // put the value into the element
+    div.innerHTML = `
+    <input id='val${index}' type='text' class='nodeval' value='Trailer'>
+    `;
+
+    div.innerHTML += `
+    
+    <div class="nodecontrols" id='controls${index}'>
+        <button id='leftadder${index}' class='nodeadderleft' onclick='addleft(${index});'>left</button>
+\    </div>`;
+
+    // position the element
+    div.style.position = 'absolute';
+    div.style.marginLeft = x+'px';
+    div.style.marginTop = y+'px';
+
+    // set the id and classname
+    div.id = 'thenode'+String(index);
+    div.className = 'node';
+
+
+    // if a node is clicked then bring it to the brong
+    div.onclick = function() {document.getElementById(div.id).style.zIndex = rnzindex; rnzindex += 1; operationwhenclicked(index)};
+
+    div.onmouseover = function() {
+        document.getElementById(div.id.replace("thenode","controls")).style.opacity = 1;
+        document.getElementById(div.id.replace("thenode","val")).style.fontSize = "20px";
+    };
+    div.onmouseout = function() {
+        document.getElementById(div.id.replace("thenode","controls")).style.opacity = 0;
+        document.getElementById(div.id.replace("thenode","val")).style.fontSize = "33px";
+    };
+
+
+    // rnzindex is the z index
+    // this should be the highest for the most recently clicked elements
+    rnzindex += 1;
+
+    // put the element in
+    treeholder.appendChild(div);
 }
 
 
@@ -84,7 +222,7 @@ function drawnode(lst, index, x, y){
 
 
     // if a node is clicked then bring it to the brong
-    div.onclick = function() {document.getElementById(div.id).style.zIndex = rnzindex; rnzindex += 1;};
+    div.onclick = function() {document.getElementById(div.id).style.zIndex = rnzindex; rnzindex += 1; operationwhenclicked(index)};
 
     div.onmouseover = function() {
         document.getElementById(div.id.replace("thenode","controls")).style.opacity = 1;
@@ -393,18 +531,27 @@ function drop(ev) {
 
         let type = ""
         let repopulatet = 0;
-        if (indata1.includes("lst[")){
-            type = "index";
+        if (indata1.includes("addafter(")){
+            type = "addafter";
             repopulatet = 0;
-        } else if (indata1.includes("lst.append(")){
-            type = "append";
+        } else if (indata1.includes("addbefore(")){
+            type = "addbefore";
             repopulatet = 1;
-        } else if (indata1.includes("lst.insert(")){
-            type = "insert";
+        } else if (indata1.includes("addfirst(")){
+            type = "addfirst";
             repopulatet = 2;
-        } else if (indata1.includes("lst.pop(")){
-            type = "pop";
+        } else if (indata1.includes("addlast(")){
+            type = "addlast";
             repopulatet = 3;
+        } else if (indata1.includes("deletefirst(")){
+            type = "deletefirst";
+            repopulatet = 4;
+        } else if (indata1.includes("deletelast(")){
+            type = "deletelast";
+            repopulatet = 5;
+        } else if (indata1.includes("deletenode(")){
+            type = "deletenode";
+            repopulatet = 6;
         }
 
         let inputpossible = indata1.split('<input class="littleinput" id="');
@@ -458,6 +605,16 @@ function moveroutbox(id){
     get(id).style.border = "2px dashed" + r.style.getPropertyValue('contrast');
 }
 
+function movenodeselector(mirror){
+    console.log("getting", mirror);
+
+    let mirror1 = get(mirror);
+    let nodeselector = get("nodeselector");
+    fillinput = mirror;
+    nodeselector.style.left = 100*(mirror1.offsetLeft + document.body.scrollLeft)/window.innerWidth + "%";
+    nodeselector.style.top = 100*(mirror1.offsetTop + document.body.scrollTop + get("res").offsetTop-100)/window.innerHeight + "%";
+}
+
 function adddraggable(ctr){
     htm = `
     <div class="bankbox" id="receiver${ctr}" droppable="true" ondrop="drop(event); moveroutbox('receiver${ctr}');" ondragover="if(!(get('receiver${ctr}').innerHTML.includes('div'))){allowDrop(event); msmover('receiver${ctr}');}else{msmoverdeny('receiver${ctr}');}" ondragleave="moveroutbox('receiver${ctr}');" aria-dropeffect="copy">
@@ -469,12 +626,16 @@ function adddraggable(ctr){
 
     elfar += 1;
 
-    document.getElementById("codebank").innerHTML += htm;
+    if (ctr < 4){
+        document.getElementById("codebank1").innerHTML += htm;
+    } else {
+        document.getElementById("codebank2").innerHTML += htm;
+    }
 }
 
 function repopulateall(){
     j = 0;
-    while (j < 4){
+    while (j < statements.length){
         repopulate(j);
         j += 1;
     }
@@ -498,10 +659,12 @@ function repopulate(i){
     elfar += 1;
 }
 
+
+
 function deletereceiver(id){
     // first check if you even can
 
-    if (elfar <= 4){
+    if (elfar <= statements.length){
         return;
     }
 
@@ -548,7 +711,7 @@ function adddropblock(){
 
     div1.innerHTML += `
         <div    class="blockreceiver"
-                style="margin-left: 25px" 
+                style="margin-left: 0%; width: 90%;" 
                 id="blockreceiver${f1statements}" 
                 droppable="true" 
                 ondrop="
@@ -569,6 +732,9 @@ function adddropblock(){
                 aria-dropeffect="copy"
         ></div>
         <div class="deletereceiver" id="blockdeletebutton${f1statements}" onclick="deletereceiver(${f1statements})">Delete</div>`;
+
+    div1.style.width = "100%";
+    div1.style.marginLeft = "5%";
 
     let cc = document.getElementById("currentcode");
     cc.appendChild(div1);
@@ -670,14 +836,20 @@ function runall(){
         if ((typeof datanow !== 'undefined') && datanow != ""){
             console.log(currentcode)
             let cd;
-            if (datanow[1] == "index"){
-                cd = runindex(datanow);
-            } else if (datanow[1] == "append"){
-                cd = runappend(datanow);
-            } else if (datanow[1] == "insert"){
-                cd = runinsert(datanow);
-            } else if (datanow[1] == "pop"){
-                cd = runpop(datanow);
+            if (datanow[1] == "addafter"){
+                cd = runaddafter(datanow);
+            } else if (datanow[1] == "addbefore"){
+                cd = runaddbefore(datanow);
+            } else if (datanow[1] == "addfirst"){
+                cd = runaddfirst(datanow);
+            } else if (datanow[1] == "addlast"){
+                cd = addlast(datanow);
+            } else if (datanow[1] == "deletefirst"){
+                cd = deletefirst(datanow);
+            } else if (datanow[1] == "deletelast"){
+                cd = deletelast(datanow);
+            } else if (datanow[1] == "deletenode"){
+                cd = deletenode(datanow);
             }
             if (cd == 1){
                 // something errored
@@ -745,14 +917,20 @@ function stepforward(){
     if ((typeof datanow !== 'undefined') && datanow != ""){
         console.log(currentcode)
         let cd;
-        if (datanow[1] == "index"){
-            cd = runindex(datanow);
-        } else if (datanow[1] == "append"){
-            cd = runappend(datanow);
-        } else if (datanow[1] == "insert"){
-            cd = runinsert(datanow);
-        } else if (datanow[1] == "pop"){
-            cd = runpop(datanow);
+        if (datanow[1] == "addafter"){
+            cd = runaddafter(datanow);
+        } else if (datanow[1] == "addbefore"){
+            cd = runaddbefore(datanow);
+        } else if (datanow[1] == "addfirst"){
+            cd = runaddfirst(datanow);
+        } else if (datanow[1] == "addlast"){
+            cd = addlast(datanow);
+        } else if (datanow[1] == "deletefirst"){
+            cd = deletefirst(datanow);
+        } else if (datanow[1] == "deletelast"){
+            cd = deletelast(datanow);
+        } else if (datanow[1] == "deletenode"){
+            cd = deletenode(datanow);
         }
         if (cd == 1){
             // something errored
@@ -771,7 +949,7 @@ function stepforward(){
     }
 
     let ntf = get("runnotif");
-    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-4)+".";
+    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-statements.length)+".";
     if (get("blockreceiver"+datanow[0]) == null){
         stepctr = 0;
         numactuallyrun = 0;
@@ -787,54 +965,131 @@ function stepforward(){
 
 
 
-function runindex(data){
-    if (data[1] != "index"){
-        alert("Internal error: wrong runner called for index, code type was ",data[1]);
-        return 1;
-    }
+function runaddafter(data){
 
     let values = data[2];
 
     // there should be two values
-    let index = parseInt(get(values[0]).value);
+    let index = parseInt(String(get(values[0]).value).replace("<selectednode>", ""));
 
     if (isNaN(index)){
-        alert("ValueError: Index must be of type Int");
+        alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted");
         return 1;
     }
 
     let value1 = get(values[1]).value;
 
     if (index >= univlst.length){
-        alert("IndexError: List Index out of Range");
+        alert("ValueError: Node Invalid");
+        return 1;
+    }
+
+    if (index < -1){
+        alert("ValueError: Node Invalid");
+        return 1;
+    }
+
+    console.log("added after",(index+1));
+
+    univlst.splice(index+1,0,value1);
+
+    drawlist(univlst);
+
+    recallibratenodes(index,1);
+
+    glownodeyellow(index+1);
+
+    return 0;
+}
+
+function runaddbefore(data){
+
+    let values = data[2];
+
+    // there should be two values
+    let index = parseInt(String(get(values[0]).value).replace("<selectednode>", ""));
+
+    if (isNaN(index)){
+        alert("ValueError: Node Invalid");
+        return 1;
+    }
+
+    let value1 = get(values[1]).value;
+
+    if (index >= univlst.length+1){
+        alert("ValueError: Node Invalid");
         return 1;
     }
 
     if (index < 0){
-        index = univlst.length+index;
+        alert("ValueError: Node Invalid");
+        return 1;
     }
 
-    univlst[index] = value1;
+    univlst.splice(index,0,value1);
 
     drawlist(univlst);
+
+    recallibratenodes(index-1,1);
 
     glownodeyellow(index);
 
     return 0;
 }
 
-function runappend(data){
-    if (data[1] != "append"){
-        alert("Internal error: wrong runner called for index, code type was ",data[1]);
-        return 1;
-    }
+function runaddfirst(data){
 
     let values = data[2];
 
     // there should be one values
     let value1 = get(values[0]).value;
 
-    univlst.push(value1);
+    univlst.splice(0,0,value1);
+
+    drawlist(univlst);
+
+    recallibratenodes(0,1);
+
+    glownodeyellow(0);
+
+    return 0;
+}
+
+function addlast(data){
+
+    let values = data[2];
+
+    // there should be one values
+    let value1 = get(values[0]).value;
+
+    univlst.splice(univlst.length,0,value1);
+
+    drawlist(univlst);
+
+    // no need to recallibrate actually
+    //recallibratenodes(index,1);
+
+    glownodeyellow(univlst.length-1);
+
+    return 0;
+}
+
+function deletefirst(data){
+
+    univlst.splice(0,1);
+
+    drawlist(univlst);
+
+    recallibratenodes(0,-1);
+
+    glownodeyellow(0);
+
+    return 0;
+}
+
+function deletelast(data){
+
+    univlst.splice(univlst.length-1,1);
 
     drawlist(univlst);
 
@@ -843,33 +1098,18 @@ function runappend(data){
     return 0;
 }
 
-function runinsert(data){
-    if (data[1] != "insert"){
-        alert("Internal error: wrong runner called for index, code type was ",data[1]);
-        return 1;
-    }
+function deletenode(data){
 
     let values = data[2];
 
-    // there should be two values
-    let index = parseInt(get(values[0]).value);
-    let value1 = get(values[1]).value;
+    // there should be one value
+    let index = parseInt(String(get(values[0]).value).replace("<selectednode>", ""));
 
-    if (isNaN(index)){
-        alert("ValueError: Index must be of type Int");
-        return 1;
-    }
+    univlst.splice(index,1);
 
-    if (index >= univlst.length){
-        alert("IndexError: List Index out of Range");
-        return 1;
-    }
+    console.log("spliced", index);
 
-    if (index < 0){
-        index = univlst.length+index;
-    }
-
-    univlst.splice(index,0,value1);
+    recallibratenodes(index-1,-1);
 
     drawlist(univlst);
 
@@ -878,56 +1118,34 @@ function runinsert(data){
     return 0;
 }
 
-function runpop(data){
-    if (data[1] != "pop"){
-        alert("Internal error: wrong runner called for index, code type was ",data[1]);
-        return 1;
+
+function recallibratenodes(changedindex, shift){
+    let i = 0;
+    while (i < inputnums+1){
+        thisinp = get("littleinput"+i);
+
+        vl = thisinp.value;
+
+        if (vl.contains("<selectednode>")){
+
+            vl = parseInt(vl.replace("<selectednode>",""));
+
+            // suppose this was node 1.
+            // changed index is the lst index where things have been unchanged
+
+            if (vl < changedindex){
+                // all ok
+            } else {
+                // if shift == +1, everything got moved to the right, so upgrade index by 1
+                // else downgrade by 1
+                vl += shift;
+                thisinp.value = "<selectednode>"+vl;
+            }
+        }
+
+        i += 1;
     }
-
-    let values = data[2];
-
-    // there should be two values
-    let index = get(values[0]).value;
-    
-
-    if (String(index).replaceAll(" ","") == ""){
-        index = univlst.length-1;
-    }
-
-    index = parseInt(index);
-
-
-    if (isNaN(index)){
-        alert("ValueError: Index must be of type Int");
-        return 1;
-    }
-
-    if (index >= univlst.length){
-        alert("IndexError: List Index out of Range");
-        return 1;
-    }
-
-    if (index < 0){
-        index = univlst.length+index;
-    }
-
-    univlst.splice(index, 1);
-
-    drawlist(univlst);
-
-    let glowindex;
-    if (index == 0){
-        glowindex = 0;
-    } else {
-        glowindex = index-1
-    }
-
-    glownodeyellow(glowindex);
-
-    return 0;
 }
-
-
 
 
 // open the "how to use" if its the first time this user has opened this
@@ -967,9 +1185,39 @@ drawlist(univlst);
 let elfar = 0;
 let inputnums = -1;
 
-function getlittleinput(){
+let fillinput = 0;
+
+function operationwhenclicked(index){
+    get("nodeselector").style.left = "-20%";
+
+    if (fillinput == 0){
+        // do nothing
+    } else {
+        get(fillinput).value = "<selectednode>"+index;
+    }
+    fillinput = 0;
+}
+
+function getlittleinput(value){
     inputnums += 1;
-    return `<input class="littleinput" id="littleinput${inputnums}" oninput="checkinput('littleinput${inputnums}');" onclick="get('littleinput${inputnums}').select();" type="text" value="0">`;
+
+    const useinp = inputnums;
+
+    let wt = 11*(String(value).length) + "px";
+    if ((String(value).length) <= 1){
+        wt = "15px";
+    }
+
+    if ((String(value).length) >= 10){
+        wt = "120px";
+    }
+
+    let otherclick = "";
+    if (value == "node1"){
+        otherclick = `movenodeselector('littleinput${useinp}');`;
+    }
+
+    return `<input class="littleinput" id="littleinput${useinp}" oninput="checkinput('littleinput${useinp}');" onclick="get('littleinput${useinp}').select(); ${otherclick}" type="text" value="${value}" style="width: ${wt};">`;
 }
 
 function checkinput(id){
@@ -986,24 +1234,33 @@ function checkinput(id){
 
 let torepopulate = 0;
 
-
+// ANNOYING. YOU CANNOY USE THE ARRAY STATEMENTS. MANUALLY EACH FUNCTION VIA IF THEN
 function getstatementbank(i){
-    if (i == 0){
-        return `lst[${getlittleinput()}] = ${getlittleinput()}`;
-    } else if (i == 1){
-        return `lst.append(${getlittleinput()})`;
-    } else if (i == 2){
-        return `lst.insert(${getlittleinput()},${getlittleinput()})`;
-    } else {
-        return `lst.pop(${getlittleinput()})`
+    if (i == 0){ 
+        return`addafter(${getlittleinput("node1")}, ${getlittleinput(1)})`;
+    } else if (i == 1){ 
+        return`addbefore(${getlittleinput("node1")}, ${getlittleinput(1)})`;
+    } else if (i == 2){ 
+        return`addfirst(${getlittleinput(1)})`;
+    } else if (i == 3){ 
+        return`addlast(${getlittleinput(1)})`;
+    } else if (i == 4){ 
+        return`deletefirst()`;
+    } else if (i == 5){ 
+        return`deletelast()`;
+    } else if (i == 6){ 
+        return`deletenode(${getlittleinput("node1")})`;
     }
 }
 
-statements = [
-    `lst[${getlittleinput()}] = ${getlittleinput()}`,
-    `lst.append(${getlittleinput()})`,
-    `lst.insert(${getlittleinput()},${getlittleinput()})`,
-    `lst.pop(${getlittleinput()})`
+let statements = [
+    `addafter(${getlittleinput("node1")}, ${getlittleinput(1)})`,
+    `addbefore(${getlittleinput("node1")}, ${getlittleinput(1)})`,
+    `addfirst(${getlittleinput(1)})`,
+    `addlast(${getlittleinput(1)})`,
+    `deletefirst()`,
+    `deletelast()`,
+    `deletenode(${getlittleinput("node1")})`,
 ];
 
 let f1statements = 0;

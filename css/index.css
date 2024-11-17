@@ -262,7 +262,7 @@ nav {
 }
 
 .larget:hover {
-  background-color: #0d6efd;
+  background-color: var(--main);
 }
 
 .logo{
@@ -278,7 +278,7 @@ nav {
 
 
 .logo:hover{
-  background-color: #0d6efd;
+  background-color: var(--main);
 }
 
 
@@ -325,6 +325,8 @@ nav {
   float: left;
   height: min-content;
   padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .runnotif {
@@ -376,6 +378,40 @@ nav {
   padding: 5px;
   transition: border 0.25s;
   float: center;
+  z-index: 15;
+}
+
+.addreceiver {
+  width: 100%;
+  margin-left: 25px;
+  margin-top: 15px;
+  height: 65px;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--bg);
+  border: 2px solid rgba(0,0,0,0);
+  border-radius: 100px;
+  background-color: var(--slight);
+  border: 1px solid rgba(0,0,0,0);
+  text-align: center;
+  padding: 0px;
+  transition: border 0.25s, background-color 0.25s;
+  cursor: pointer;
+}
+
+.nodeselector {
+  position: fixed;
+  left: -200px;
+  z-index: 1001;
+  top: 0px;
+  padding: 5px;
+  width: 150px;
+  height: 100px;
+  background-color: var(--bg);
+  border: 2px solid var(--main);
+  border-radius: 25px;
+  color: white;
+  text-align: center;
 }
   
 .littleinput {
@@ -723,5 +759,5 @@ input:checked + .slider:before {
 }
 
 .coolbuttonrun:hover {
-  background-color: #0d6efd;
+  background-color: var(--main);
 }
