@@ -53,7 +53,7 @@ button {
   color: var(--contrast);
   text-align: center;
   background-color: var(--bg);
-
+  transition: box-shadow 0.5s;
   overflow: hidden;
 }
 
@@ -180,11 +180,16 @@ button {
   z-index: 10000;
 }
 
+/* do not change this it is used by linkedlist */
 .connector{
   position: absolute;
   border-radius: var(--br);
   border-top: 7px solid var(--contrast);
-  border-left: 7px solid var(--contrast);
+  border-left: 0px solid var(--contrast);
+}
+
+.connectorsholder {
+  transition: opacity 0.2s;
 }
 
 .notif{
@@ -412,6 +417,8 @@ nav {
   border-radius: 25px;
   color: white;
   text-align: center;
+  opacity: 0;
+  transition: opacity 0.25s;
 }
   
 .littleinput {

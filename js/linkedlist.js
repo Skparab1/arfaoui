@@ -28,7 +28,7 @@ function drawlist(lst){
     let starty = 10;
 
     drawheader(startx, starty);
-    drawrightline(startx+150);
+    drawrightline(startx+150, 0);
 
     startx += 150;
 
@@ -40,36 +40,38 @@ function drawlist(lst){
         i += 1;
         startx += 150;
 
-        drawrightline(startx);
-        drawleftline(startx);
+        drawrightline(startx, i);
+        drawleftline(startx, i);
     }
 
     drawtrailer(startx, starty, i);
-    drawleftline(startx+150);
+    drawleftline(startx+150, i);
 
 }
 
 
-function drawrightline(xs){
+function drawrightline(xs,mynum){
     // create the connector line for the left side
     const div = document.createElement('div');
     div.className = 'connector';
-    div.style.width = 150+'px';
+    div.style.width = 50+'px';
     div.style.height = '10px'
-    div.style.left = (xs-150)+'px';
+    div.style.left = (xs-50)+'px';
     div.style.top = (150)+'px';
     div.style.zIndex = -1;
+    div.id = ("rightline"+mynum);
     document.getElementById('connectors').appendChild(div);
 }
 
-function drawleftline(xs){
+function drawleftline(xs,mynum){
     const div1 = document.createElement('div');
     div1.className = 'connector';
-    div1.style.width = 150+'px';
+    div1.style.width = 50+'px';
     div1.style.height = 10+'px'
-    div1.style.left = (xs-300)+'px';
+    div1.style.left = (xs-200)+'px';
     div1.style.top = (170)+'px';
     div1.style.zIndex = -1;
+    div1.id = ("leftline"+mynum);
     document.getElementById('connectors').appendChild(div1);
 }
 
@@ -496,6 +498,93 @@ function forcedark(){
 }
 
 
+
+async function transitiondowndisappear(elid){
+    let el = get(elid);
+    let i = 10;
+    while (i < 100){
+        el.style.marginTop = i+"px";
+        el.style.opacity = 1-(i/100);
+
+        if (runspeed == "normal"){
+            await sleep();
+        }
+        i += 0.5;
+    }
+}
+
+async function transitionupappear(elid){
+    let el = get(elid);
+    let i = 100;
+    while (i > 10){
+        el.style.marginTop = i+"px";
+        el.style.opacity = 1-(i/100);
+
+        if (runspeed == "normal"){
+            await sleep();
+        }
+
+        i -= 0.5;
+    }
+}
+
+async function animateshiftleftby1(elids){
+
+    let els = [];
+    let g = 0;
+    while (g < elids.length){
+        els.push(get(elids[g]));
+        g += 1;
+    }
+
+    let i = 0;
+    while (i < 150){
+        let j = 0;
+        while (j < els.length){
+            els[j].style.marginLeft = (els[j].offsetLeft-1)+"px";
+            j += 1;
+        }
+
+        if (runspeed == "normal"){
+            await sleep();
+        }
+
+        i += 1;
+    }
+}
+
+
+async function animateshiftrightby1(elids){
+
+    let els = [];
+    let g = 0;
+    while (g < elids.length){
+        els.push(get(elids[g]));
+        g += 1;
+    }
+
+    let i = 0;
+    while (i < 150){
+        let j = 0;
+        while (j < els.length){
+            if (els[j] != null){
+                // if (elids[j].includes("line")){
+                //     els[j].style.left = (els[j].offsetLeft+1)+"px";
+                // } else {
+                els[j].style.marginLeft = (els[j].offsetLeft+1)+"px";
+                // }
+            }
+            j += 1;
+        }
+
+        if (runspeed == "normal"){
+            await sleep();
+        }
+        i += 1;
+    }
+}
+
+
 // drag and drop workings
 
 function allowDrop(ev) {
@@ -608,11 +697,25 @@ function moveroutbox(id){
 function movenodeselector(mirror){
     console.log("getting", mirror);
 
+    try {
+        let mirror1 = get(mirror);
+        let nodeselector = get("nodeselector");
+        fillinput = mirror;
+        nodeselector.style.opacity = 1;
+        nodeselector.style.left = 100*(mirror1.offsetLeft + document.body.scrollLeft)/window.innerWidth + "%";
+        nodeselector.style.top = 100*(mirror1.offsetTop + document.body.scrollTop + get("res").offsetTop-100)/window.innerHeight + "%";
+    
+    } catch (error) {
+        
+    }
+  }
+
+function movenodenotif(mirror){
     let mirror1 = get(mirror);
-    let nodeselector = get("nodeselector");
-    fillinput = mirror;
-    nodeselector.style.left = 100*(mirror1.offsetLeft + document.body.scrollLeft)/window.innerWidth + "%";
-    nodeselector.style.top = 100*(mirror1.offsetTop + document.body.scrollTop + get("res").offsetTop-100)/window.innerHeight + "%";
+    let nodenotif = get("nodenotif");
+    nodenotif.style.opacity = 1;
+    nodenotif.style.left = 100*(mirror1.offsetLeft + document.body.scrollLeft)/window.innerWidth + "%";
+    nodenotif.style.top = 100*(mirror1.offsetTop + document.body.scrollTop + get("res").offsetTop-100)/window.innerHeight + "%";
 }
 
 function adddraggable(ctr){
@@ -819,9 +922,10 @@ function getnextstatement(alreadyrun){
 
     return lowestdata;
 }
-
-function runall(){
+async function runall(){
     resetreceiverglows();
+
+    runspeed = "expedited";
 
     let runallctr = 0;
     
@@ -837,19 +941,19 @@ function runall(){
             console.log(currentcode)
             let cd;
             if (datanow[1] == "addafter"){
-                cd = runaddafter(datanow);
+                cd = await runaddafter(datanow);
             } else if (datanow[1] == "addbefore"){
-                cd = runaddbefore(datanow);
+                cd = await runaddbefore(datanow);
             } else if (datanow[1] == "addfirst"){
-                cd = runaddfirst(datanow);
+                cd = await runaddfirst(datanow);
             } else if (datanow[1] == "addlast"){
-                cd = addlast(datanow);
+                cd = await addlast(datanow);
             } else if (datanow[1] == "deletefirst"){
-                cd = deletefirst(datanow);
+                cd = await deletefirst(datanow);
             } else if (datanow[1] == "deletelast"){
-                cd = deletelast(datanow);
+                cd = await deletelast(datanow);
             } else if (datanow[1] == "deletenode"){
-                cd = deletenode(datanow);
+                cd = await deletenode(datanow);
             }
             if (cd == 1){
                 // something errored
@@ -869,6 +973,7 @@ function runall(){
 }
 
 async function animrunall(){
+    runspeed = "normal";
     stepinsession = true;
     while (stepinsession){
         stepforward();
@@ -883,7 +988,10 @@ let numactuallyrun = 0;
 let totalerrors = 0;
 let stepsofar = [];
 
-function stepforward(){
+async function stepforward(){
+
+    runspeed = "normal";
+
     resetreceiverglows();
     if (!stepinsession){
         stepctr = 0;
@@ -900,7 +1008,7 @@ function stepforward(){
     if (get("blockreceiver"+datanow[0]) == null){
 
         let ntf = get("runnotif");
-        ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
+        ntf.textContent += "\nFinished running with "+totalerrors+" error(s).";
 
         stepctr = 0;
         numactuallyrun = 0;
@@ -918,19 +1026,19 @@ function stepforward(){
         console.log(currentcode)
         let cd;
         if (datanow[1] == "addafter"){
-            cd = runaddafter(datanow);
+            cd = await runaddafter(datanow);
         } else if (datanow[1] == "addbefore"){
-            cd = runaddbefore(datanow);
+            cd = await runaddbefore(datanow);
         } else if (datanow[1] == "addfirst"){
-            cd = runaddfirst(datanow);
+            cd = await runaddfirst(datanow);
         } else if (datanow[1] == "addlast"){
-            cd = addlast(datanow);
+            cd = await addlast(datanow);
         } else if (datanow[1] == "deletefirst"){
-            cd = deletefirst(datanow);
+            cd = await deletefirst(datanow);
         } else if (datanow[1] == "deletelast"){
-            cd = deletelast(datanow);
+            cd = await deletelast(datanow);
         } else if (datanow[1] == "deletenode"){
-            cd = deletenode(datanow);
+            cd = await deletenode(datanow);
         }
         if (cd == 1){
             // something errored
@@ -948,8 +1056,10 @@ function stepforward(){
         stepforward();
     }
 
-    let ntf = get("runnotif");
-    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-statements.length)+".";
+    if (stepinsession){
+        let ntf = get("runnotif");
+        ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-statements.length)+".";
+    }
     if (get("blockreceiver"+datanow[0]) == null){
         stepctr = 0;
         numactuallyrun = 0;
@@ -958,14 +1068,14 @@ function stepforward(){
         stepinsession = false;
 
         let ntf = get("runnotif");
-        ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
+        ntf.textContent += "\nFinished running with "+totalerrors+" error(s).";
         return;
     }
 }
 
 
 
-function runaddafter(data){
+async function runaddafter(data){
 
     let values = data[2];
 
@@ -973,6 +1083,7 @@ function runaddafter(data){
     let index = parseInt(String(get(values[0]).value).replace("<selectednode>", ""));
 
     if (isNaN(index)){
+        movenodeselector(values[0]);
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
@@ -980,29 +1091,64 @@ function runaddafter(data){
     let value1 = get(values[1]).value;
 
     if (index >= univlst.length){
+        movenodeselector(values[0]);
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
     if (index < -1){
+        movenodeselector(values[0]);
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
     console.log("added after",(index+1));
 
+    let elstoshift = [];
+
+    let u = index+1;
+    while (u < univlst.length+1){ // +1 to include the trailer
+        elstoshift.push("thenode"+u);
+        u += 1;
+    }
+
+    // glownodeyellow(index);
+    // glownodeyellow(index-2);
+    // glownodeyellow(index-1);
+
+    get("connectors").style.opacity = 0;
+
+    await animateshiftrightby1(elstoshift);
+
+
     univlst.splice(index+1,0,value1);
 
     drawlist(univlst);
 
-    recallibratenodes(index,1);
+    recallibratenodes(index+1,1);
+
+    glownodeyellow(index);
+    glownodeyellow(index+1);
+
+    get("connectors").style.opacity = 0;
+
+    drawlist(univlst);
+
+    glownodeyellow(index);
+    glownodeyellow(index+1);
+
+    await transitionupappear("thenode"+(index+1));
+
+    drawlist(univlst);
+
+    get("connectors").style.opacity = 1;
 
     glownodeyellow(index+1);
 
     return 0;
 }
 
-function runaddbefore(data){
+async function runaddbefore(data){
 
     let values = data[2];
 
@@ -1010,6 +1156,7 @@ function runaddbefore(data){
     let index = parseInt(String(get(values[0]).value).replace("<selectednode>", ""));
 
     if (isNaN(index)){
+        movenodeselector(values[0]);
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
@@ -1017,88 +1164,224 @@ function runaddbefore(data){
     let value1 = get(values[1]).value;
 
     if (index >= univlst.length+1){
+        movenodeselector(values[0]);
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
     if (index < 0){
+        movenodeselector(values[0]);
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
+    let elstoshift = [];
+
+    let u = index;
+    while (u < univlst.length+1){ // +1 to include the trailer
+        elstoshift.push("thenode"+u);
+        u += 1;
+    }
+
+    glownodeyellow(index);
+    glownodeyellow(index-1);
+
+    get("connectors").style.opacity = 0;
+
+    await animateshiftrightby1(elstoshift);
+
     univlst.splice(index,0,value1);
+    recallibratenodes(index,1);
 
     drawlist(univlst);
 
-    recallibratenodes(index-1,1);
+
+    drawlist(univlst);
+
+    glownodeyellow(index);
+    glownodeyellow(index+1);
+
+    await transitionupappear("thenode"+index);
+
+    drawlist(univlst);
+
+    get("connectors").style.opacity = 1;
 
     glownodeyellow(index);
 
     return 0;
 }
 
-function runaddfirst(data){
+async function runaddfirst(data){
 
     let values = data[2];
 
     // there should be one values
     let value1 = get(values[0]).value;
 
+
+    let elstoshift = [];
+
+    let u = 0;
+    while (u < univlst.length+1){ // +1 to include the trailer
+        elstoshift.push("thenode"+u);
+        u += 1;
+    }
+
+    glownodeyellow(0);
+    glownodeyellow(0-1);
+
+    get("connectors").style.opacity = 0;
+
+    await animateshiftrightby1(elstoshift);
+
     univlst.splice(0,0,value1);
+
+    recallibratenodes(0,1);
 
     drawlist(univlst);
 
-    recallibratenodes(0,1);
+    glownodeyellow(0);
+    glownodeyellow(0+1);
+
+    await transitionupappear("thenode"+0);
+
+    drawlist(univlst);
+
+    get("connectors").style.opacity = 1;
 
     glownodeyellow(0);
 
     return 0;
 }
 
-function addlast(data){
+async function addlast(data){
 
     let values = data[2];
 
     // there should be one values
     let value1 = get(values[0]).value;
 
-    univlst.splice(univlst.length,0,value1);
+    let elstoshift = [];
 
-    drawlist(univlst);
+    let u = univlst.length;
+    while (u < univlst.length+1){ // +1 to include the trailer
+        elstoshift.push("thenode"+u);
+        u += 1;
+    }
+
+    glownodeyellow(univlst.length);
+    glownodeyellow(univlst.length-1);
+
+    get("connectors").style.opacity = 0;
+
+    await animateshiftrightby1(elstoshift);
+
+
+    univlst.splice(univlst.length,0,value1);
 
     // no need to recallibrate actually
     //recallibratenodes(index,1);
+
+    drawlist(univlst);
+
+    glownodeyellow(univlst.length);
+    glownodeyellow(univlst.length-1);
+
+    await transitionupappear("thenode"+(univlst.length-1));
+
+    drawlist(univlst);
+
+    get("connectors").style.opacity = 1;
 
     glownodeyellow(univlst.length-1);
 
     return 0;
 }
 
-function deletefirst(data){
+async function deletefirst(data){
 
-    univlst.splice(0,1);
+    if (univlst.length == 0){
+        alert("List is empty!")
+        return 1;
+    }
 
     drawlist(univlst);
 
+    get("connectors").style.opacity = 0;
+
+    glownodeyellow(-1);
+    glownodeyellow(0);
+    glownodeyellow(1);
+
+
+    await transitiondowndisappear("thenode"+(0));
+
+
+    let elstoshift = [];
+
+    let u = 1;
+    while (u < univlst.length+1){ // +1 to include the trailer
+        elstoshift.push("thenode"+u);
+        u += 1;
+    }
+
+    await animateshiftleftby1(elstoshift);
+
+    univlst.splice(0,1);
+
     recallibratenodes(0,-1);
+
+    drawlist(univlst);
+
+    get("connectors").style.opacity = 1;
 
     glownodeyellow(0);
 
     return 0;
 }
 
-function deletelast(data){
+async function deletelast(data){
+
+    if (univlst.length == 0){
+        alert("List is empty!")
+        return 1;
+    }
+
+    drawlist(univlst);
+
+    glownodeyellow(univlst.length-2);
+    glownodeyellow(univlst.length-1);
+    glownodeyellow(univlst.length);
+
+    get("connectors").style.opacity = 0;
+
+    await transitiondowndisappear("thenode"+(univlst.length-1));
+
+
+    let elstoshift = [];
+
+    let u = univlst.length;
+    while (u < univlst.length+1){ // +1 to include the trailer
+        elstoshift.push("thenode"+u);
+        u += 1;
+    }
+
+    await animateshiftleftby1(elstoshift);
 
     univlst.splice(univlst.length-1,1);
 
     drawlist(univlst);
 
+    get("connectors").style.opacity = 1;
+
     glownodeyellow(univlst.length-1);
 
     return 0;
 }
 
-function deletenode(data){
+async function deletenode(data){
+    
 
     let values = data[2];
 
@@ -1106,63 +1389,118 @@ function deletenode(data){
 
     if (String(get(values[0]).value).replace("<selectednode>", "") == "<DELETED NODE>"){
         alert("Error: The node you are trying to reference has been deleted.");
+        movenodeselector(values[0]);
         return 1;
     }
 
     let index = parseInt(String(get(values[0]).value).replace("<selectednode>", ""));
 
-    univlst.splice(index,1);
 
     if (isNaN(index)){
+        movenodeselector(values[0]);
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
     if (index >= univlst.length+1){
+        movenodeselector(values[0]);
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
     if (index < 0){
+        movenodeselector(values[0]);
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
 
 
-    recallibratenodes(index-1,-1);
+    drawlist(univlst);
+
+    glownodeyellow(index-1);
+    glownodeyellow(index);
+    glownodeyellow(index+1);
+
+    get("connectors").style.opacity = 0;
+
+    await transitiondowndisappear("thenode"+(index));
+
+
+    let elstoshift = [];
+
+    let u = index+1;
+    while (u < univlst.length+1){ // +1 to include the trailer
+        elstoshift.push("thenode"+u);
+        u += 1;
+    }
+
+    await animateshiftleftby1(elstoshift);
+
+    univlst.splice(index,1);
+
+    setdeleted("<selectednode>"+index);
 
     get(values[0]).value = "<DELETED NODE>";
 
+    recallibratenodes(index,-1);
+
     drawlist(univlst);
+
+    get("connectors").style.opacity = 1;
 
     glownodeyellow(index);
 
     return 0;
 }
 
+function setdeleted(index){
+    let i = 0;
+    while (i < inputnums+1){
+        let thisinp = get("littleinput"+i);
+
+        try {
+            let vl = String(thisinp.value);
+
+            // alert(vl);
+
+            if (vl.includes(index)){
+                thisinp.value = "<DELETED NODE>";
+            }
+        } catch (error) {
+            
+        }
+
+        i += 1;
+    }
+}
+
 
 function recallibratenodes(changedindex, shift){
     let i = 0;
     while (i < inputnums+1){
-        thisinp = get("littleinput"+i);
+        let thisinp = get("littleinput"+i);
 
-        vl = String(thisinp.value);
+        try {
+            let vl = String(thisinp.value);
 
-        if (vl.includes("<selectednode>")){
-
-            vl = parseInt(vl.replace("<selectednode>",""));
-
-            // suppose this was node 1.
-            // changed index is the lst index where things have been unchanged
-
-            if (vl < changedindex){
-                // all ok
-            } else {
-                // if shift == +1, everything got moved to the right, so upgrade index by 1
-                // else downgrade by 1
-                vl += shift;
-                thisinp.value = "<selectednode>"+vl;
+            if (vl.includes("<selectednode>")){
+    
+                vl = parseInt(vl.replace("<selectednode>",""));
+    
+                // suppose this was node 1.
+                // changed index is the lst index where things have been unchanged
+    
+                if (vl < changedindex){
+                    // all ok
+                } else {
+                    // if shift == +1, everything got moved to the right, so upgrade index by 1
+                    // else downgrade by 1
+                    vl += shift;
+                    thisinp.value = "<selectednode>"+vl;
+                }
             }
+        } catch (error) {
+            
         }
 
         i += 1;
@@ -1209,15 +1547,51 @@ let inputnums = -1;
 
 let fillinput = 0;
 
-function operationwhenclicked(index){
+async function turnoffnodeselector(){
+    get("nodeselector").style.opacity = 0;
+
+    await sleep(250);
+
     get("nodeselector").style.left = "-20%";
+}
+
+async function operationwhenclicked(index){
+    get("nodeselector").style.opacity = 0;
+
+    await sleep(250);
+
+    get("nodeselector").style.left = "-20%";
+
+
+    glownodeyellow(index);
 
     if (fillinput == 0){
         // do nothing
     } else {
         get(fillinput).value = "<selectednode>"+index;
     }
+
+    movenodenotif(fillinput);
+
     fillinput = 0;
+
+    get("nodenotif").innerHTML = "This argument now points to the highlighted node, containing "+univlst[index];
+
+
+    get("nodenotif").style.opacity = 1;
+
+    await sleep(5000);
+
+    get("nodenotif").style.opacity = 0;
+
+    await sleep(250);
+
+    drawlist(univlst);
+
+    get("nodenotif").style.left = "-20%";
+
+
+    
 }
 
 function getlittleinput(value){
@@ -1235,11 +1609,13 @@ function getlittleinput(value){
     }
 
     let otherclick = "";
+    let outclick = "";
     if (value == "node1"){
         otherclick = `movenodeselector('littleinput${useinp}');`;
+        outclick = "turnoffnodeselector()";
     }
 
-    return `<input class="littleinput" id="littleinput${useinp}" oninput="checkinput('littleinput${useinp}');" onclick="get('littleinput${useinp}').select(); ${otherclick}" type="text" value="${value}" style="width: ${wt};">`;
+    return `<input class="littleinput" id="littleinput${useinp}" oninput="checkinput('littleinput${useinp}');" onclick="get('littleinput${useinp}').select();" onmouseover="${otherclick}" onmouseout="${outclick}" type="text" value="${value}" style="width: ${wt};">`;
 }
 
 function checkinput(id){
@@ -1291,6 +1667,8 @@ let currentcode = [];
 
 adddropblock();
 
+
+let runspeed = "normal";
 
 
 jiniter= 0;

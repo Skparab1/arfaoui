@@ -3,37 +3,39 @@
   <head>
     <meta charset='utf-8'>
     <meta name='og:viewport' content='width=device-width,initial-scale=1'>
-    <meta name="og:description" content="Data Structures Visualizer">
-    <title>Data Structures Visualizer</title>
-    <link rel="stylesheet" href="css/index.css">
+    <meta name="og:description" content="Data Structures Visualizer - Lists">
+    <title>Data Structures Visualizer - Stack</title>
+    <link rel="stylesheet" href="../css/index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/x-icon" href="./assets/favicon.png">
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Finlandica&display=swap" rel="stylesheet"> 
   </head>
   <body>
     <nav id="nav1">
       <ul class="nav-items navleft">
-        <li class="headername">Data Structures Visualizer</li>
+        <li class="headername">Stack</li>
       </ul>
       <ul class="nav-items navcenter" id="nav">
-        <li><a class="larget" href="">List</a></li>
-        <li><a class="larget" href="">Linked List</a></li>
-        <li><a class="larget" href="">Stack</a></li>
-        <li><a class="larget" href="">Queue</a></li>
-        <li><a class="larget" href="">Binary Tree</a></li>
-        <li><a class="larget" href="">Dictionary</a></li>
-      </ul> 
+        <li><a class="larget" href="../ds/list.html">List</a></li>
+        <li><a class="larget" href="../ds/linkedlist.html">Linked List</a></li>
+        <li><a class="larget" href="../ds/stack.html">Stack</a></li>
+        <li><a class="larget" href="../ds/queue.html">Queue</a></li>
+        <li><a class="larget" href="../ds/binarytree.html">Binary Tree</a></li>
+        <li><a class="larget" href="../ds/dictionary.html">Dictionary</a></li>
+      </ul>
       <ul class="nav-items navright">
-        <li title="Settings"><a onclick="openprefs(); openscreen();"><img src="assets/settings.png" height="30px" class="logo"></a></li>
-        <li title="Help"><a onclick="openel('instructions'); openscreen();" ><img src="assets/help.png" height="30px" class="logo" style="cursor: help;"></a></li>
-        <li title="Report bug"><a href="https://github.com/skparab1/binarytree/issues/new" target="_blank"><img src="assets/reportbuggy.png" height="30px" class="logo"></a></li>
+        <li title="Settings"><a onclick="openprefs(); openscreen();"><img src="../assets/settings.png" height="30px" class="logo"></a></li>
+        <li title="Help"><a onclick="openel('instructions'); openscreen();" ><img src="../assets/help.png" height="30px" class="logo"></a></li>
+        <li title="Report bug"><a href="https://github.com/skparab1/binarytree/issues/new" target="_blank"><img src="../assets/reportbuggy.png" height="30px" class="logo"></a></li>
       </ul>
     </nav>
 
     <div class="fullwidth">
         <h1 id='head' style="font-size: 50px; color: rgba(0,0,0,0);">e</h1>
     </div>
+
+
 
     <div id="treeholder">
 
@@ -43,38 +45,30 @@
 
     </div>
 
-    <div id='res' class="results" onmouseenter="raiseresults();" onmouseleave="lowerresults();">
-      <button class="exit-modal" onclick="if (!stayingup){ raiseresults(); stayingup = true; document.getElementById('sb').textContent = 'Unlock movement';} else {stayingup = false; document.getElementById('sb').textContent = 'Lock movement';}"><p id='sb'>Lock movement</p></button>
-      <button class="exit-modal" style='left: 15px;' onclick="openprefs(); openscreen();"><p id='prefs'>Preferences</p></button>
 
-      <h1>Output</h1>
+    <div id='res' class="results">
+      <div class="fullwidth">
+        <div class="quarterleft" id="codebank" style="border-right: 3px solid var(--main); height: 360px;">
+          <h2>Code Bank</h2>
+        </div>
+        <div class="halfleft">
+          <h2>Current Code</h2>
+          <div class="codestatementholder" id="currentcode">
+          </div>
+        </div>
+        <div class="quarterleft" id="codebank" style="text-align: center; border-left: 3px solid var(--main); height: 100%;">
+          <h2>Run Controls</h2>
+          <div id="run1" class="coolbuttonrun" onclick="if (!muted2 && !muted3){runall();}">Run All</div>
+          <div id="run2" class="coolbuttonrun" onclick="if (!muted3){mutecontrols2(); animrunall();}">Slowly Run All</div>
+          <div id="run3" class="coolbuttonrun" onclick="if (!muted2){mutecontrols3(); stepforward();}">Step</div>
+          <h2 id="runnotif" class="runnotif"></h2>
+        </div>
+      </div>
 
-      <div class="guesstile">
-        <h3>Post order <span id='playpost' onclick=" if (!disabled){(async () => { disableplay(); redrawtree(); await glowtreepostorder(root); enableplay(); })();}" style="color: rgb(255, 51, 0); cursor: pointer; font-size: 15px;"> (Light-up animation)</span></h3>
-        <input class="guess" id="postorder">
-      </div>
-      <div class="guesstile">
-        <h3>In order <span id='playin' onclick="  if (!disabled){(async () => { disableplay(); redrawtree(); await glowtreeinorder(root); enableplay(); })();}" style="color: rgb(255, 51, 0); cursor: pointer; font-size: 15px;"> (Light-up animation)</span></h3>
-        <input class="guess" id="inorder">
-        <div class="check" onclick="checkall();">Check All</div>
-        <div class="check" onclick="showsolutions();">Solutions</div>
-      </div>
-      <div class="guesstile">
-        <h3>Pre order <span id='playpre' onclick="  if (!disabled){(async () => { disableplay(); redrawtree(); await glowtreepreorder(root); enableplay(); })();}" style="color: rgb(255, 51, 0); cursor: pointer; font-size: 15px;"> (Light-up animation)</span></h3>
-        <input class="guess" id="preorder">
-      </div>
+
     </div>
 
     <div id="screen" class="screen"></div>
-
-    <div class="largenotif" id="solutions">
-      <!-- warning: everything inside of this is overwritten by js function checkall. do not change this -->
-      <h1>Solutions</h1>
-      <h5 id="preordersol">Pre order: </h5>
-      <h5 id="inordersol">In order: </h5>
-      <h5 id="postordersol">Post order: </h5>
-      <div class="close" onclick="closesolutions();">Close</div>
-    </div>
 
     <div class="largenotif" id="preferences" style="height: fit-content;">
       <h1 style="font-size: 25px;">Settings</h1>
@@ -84,15 +78,9 @@
         <span class="slider round"></span>
       </label>
 
-      <h3 style="font-size: 15px; margin-bottom: 5px; margin-top: 0px;" id="lines">Lines: (Cornered)</h3>
-      <label class="switch" onclick="toggleangle();">
-        <input type="checkbox">
-        <span class="slider round"></span>
-      </label>
-
-      <h3 style="font-size: 15px; margin-bottom: 0px; margin-top: 0px;" id="animwait">Light-up animation delay time: 500ms</h3>
+      <h3 style="font-size: 15px; margin-bottom: 0px; margin-top: 0px;" id="animwait">Light-up animation delay time: 1500ms</h3>
       <div class="slide2container" style="margin-top: -20px;">
-        <input type="range" min="100" max="2000" value="500" step="10" class="slider2" name="waittime" id="waittime" onchange="document.getElementById('animwait').textContent = 'Light-up animation delay time: '+document.getElementById('waittime').value+'ms'; localStorage.setItem('btspeed',document.getElementById('waittime').value);">
+        <input type="range" min="100" max="5000" value="1500" step="10" class="slider2" name="waittime" id="waittime" onchange="document.getElementById('animwait').textContent = 'Light-up animation delay time: '+document.getElementById('waittime').value+'ms'; localStorage.setItem('btspeed',document.getElementById('waittime').value);">
       </div>
 
       <div class="close" onclick="closeprefs(); closescreen();">Close</div>
@@ -123,12 +111,12 @@
 
     <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
       <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
-      <h5 style='font-size: 15px; margin: 10px;'>1. Construct a binary tree using the left/right buttons to add nodes and delete button to remove nodes or press "random tree" to generate a random tree.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>2. Type in guesses for results in output box at the bottom of your screen</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>3. Click "check answers" or "view solutions" to verify</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>4. Click "Light-up animation" to see light up animations of traversal</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>5. Click "Reset Tree" to start over</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>6. Click "Share Tree" share your tree with someone else</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>1. Modify the list by hovering over an element and using the "left/right" buttons to add elements and "delete" button to remove elements.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>2. Drag blocks of code from the code bank to the current code.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>3. Click the digits in blue to change the list contents and function inputs.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>4. Press "run all" to run all the code instantly.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>5. Press "slowly run all" to run the code with delays between each block.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>6. Press "step" to run one one block of code at a time.</h5>
       <div class="close" onclick="closeinstructions(); closescreen();">Close</div>
     </div>
 
@@ -152,7 +140,7 @@
     <img class="standaloneicon" id="check1" src="assets/greencheck.png" height="75px" alt="green check">
     <img class="standaloneicon" id="check2" src="assets/greencheck.png" height="75px" alt="green check">
     <img class="standaloneicon" id="check3" src="assets/greencheck.png" height="75px" alt="green check"> -->
-    <script src="js/index.js"></script>
+    <script src="../js/stack.js"></script>
 
   </body>
 </html>

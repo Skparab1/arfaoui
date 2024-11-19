@@ -1,4 +1,4 @@
-// DS visualizer: lists
+// DS visualizer: stacks
 
 
 // ah how nice it is to touch javascript after so long.
@@ -468,18 +468,12 @@ function drop(ev) {
 
         let type = ""
         let repopulatet = 0;
-        if (indata1.includes("lst[")){
-            type = "index";
+        if (indata1.includes("push")){
+            type = "push";
             repopulatet = 0;
-        } else if (indata1.includes("lst.append(")){
-            type = "append";
-            repopulatet = 1;
-        } else if (indata1.includes("lst.insert(")){
-            type = "insert";
-            repopulatet = 2;
-        } else if (indata1.includes("lst.pop(")){
+        } else if (indata1.includes("pop")){
             type = "pop";
-            repopulatet = 3;
+            repopulatet = 1;
         }
 
         let inputpossible = indata1.split('<input class="littleinput" id="');
@@ -549,7 +543,7 @@ function adddraggable(ctr){
 
 function repopulateall(){
     j = 0;
-    while (j < 4){
+    while (j < statements.length){
         repopulate(j);
         j += 1;
     }
@@ -576,7 +570,7 @@ function repopulate(i){
 function deletereceiver(id){
     // first check if you even can
 
-    if (elfar <= 4){
+    if (elfar <= statements.length){
         return;
     }
 
@@ -728,7 +722,6 @@ function getnextstatement(alreadyrun){
 
     return lowestdata;
 }
-
 async function runall(){
     resetreceiverglows();
 
@@ -747,18 +740,15 @@ async function runall(){
         if ((typeof datanow !== 'undefined') && datanow != ""){
             console.log(currentcode)
             let cd;
-            if (datanow[1] == "index"){
-                cd = await runindex(datanow);
-            } else if (datanow[1] == "append"){
-                cd = await runappend(datanow);
-            } else if (datanow[1] == "insert"){
-                cd = await runinsert(datanow);
+            if (datanow[1] == "push"){
+                cd = await runpush(datanow);
             } else if (datanow[1] == "pop"){
                 cd = await runpop(datanow);
             }
             if (cd == 1){
                 // something errored
                 errorscount += 1;
+                console.log("errored on ", datanow[0]);
                 glowreceiver(datanow[0]);
             }
         }
@@ -773,7 +763,7 @@ async function runall(){
 }
 
 async function animrunall(){
-    runspeed = "normal";
+    runspeed = "normal"
     stepinsession = true;
     while (stepinsession){
         stepforward();
@@ -790,7 +780,6 @@ let stepsofar = [];
 
 async function stepforward(){
     runspeed = "normal";
-    
     resetreceiverglows();
     if (!stepinsession){
         stepctr = 0;
@@ -824,15 +813,12 @@ async function stepforward(){
     if ((typeof datanow !== 'undefined') && datanow != ""){
         console.log(currentcode)
         let cd;
-        if (datanow[1] == "index"){
-            cd = await runindex(datanow);
-        } else if (datanow[1] == "append"){
-            cd = await runappend(datanow);
-        } else if (datanow[1] == "insert"){
-            cd = await runinsert(datanow);
+        if (datanow[1] == "push"){
+            cd = await runpush(datanow);
         } else if (datanow[1] == "pop"){
             cd = await runpop(datanow);
         }
+
         if (cd == 1){
             // something errored
             console.log("errored on ", datanow[0]);
@@ -849,116 +835,33 @@ async function stepforward(){
         stepforward();
     }
 
-    let ntf = get("runnotif");
-    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-4)+".";
-    if (get("blockreceiver"+datanow[0]) == null){
+    if (stepinsession){
         let ntf = get("runnotif");
-        ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
+        ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-statements.length)+".";    
+    }
 
+    if (get("blockreceiver"+datanow[0]) == null){
         stepctr = 0;
         numactuallyrun = 0;
         stepsofar = [];
         totalerrors = 0;
         stepinsession = false;
+
+        let ntf = get("runnotif");
+        ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
         return;
     }
 }
 
 
-
-function runindex(data){
-    if (data[1] != "index"){
-        alert("Internal error: wrong runner called for index, code type was ",data[1]);
-        return 1;
-    }
+async function runpush(data){
 
     let values = data[2];
 
-    // there should be two values
-    let index = parseInt(get(values[0]).value);
-
-    if (isNaN(index)){
-        alert("ValueError: Index must be of type Int");
-        return 1;
-    }
-
-    let value1 = get(values[1]).value;
-
-    if (index >= univlst.length){
-        alert("IndexError: List Index out of Range");
-        return 1;
-    }
-
-    if (index < 0){
-        index = univlst.length+index;
-    }
-
-    univlst[index] = value1;
-
-    drawlist(univlst);
-
-    glownodeyellow(index);
-
-    return 0;
-}
-
-async function runappend(data){
-    if (data[1] != "append"){
-        alert("Internal error: wrong runner called for index, code type was ",data[1]);
-        return 1;
-    }
-
-    let values = data[2];
-
-    // there should be one values
+    // there should be only one value values
     let value1 = get(values[0]).value;
 
-    univlst.push(value1);
-
-    glownodeyellow(univlst.length-1);
-    glownodeyellow(univlst.length-2);
-
-    drawlist(univlst);
-
-    glownodeyellow(univlst.length-1);
-    glownodeyellow(univlst.length-2);
-
-    if (runspeed == "normal"){
-        await sleep();
-    }
-
-    drawlist(univlst);
-
-    glownodeyellow(univlst.length-1);
-
-    return 0;
-}
-
-async function runinsert(data){
-    if (data[1] != "insert"){
-        alert("Internal error: wrong runner called for index, code type was ",data[1]);
-        return 1;
-    }
-
-    let values = data[2];
-
-    // there should be two values
-    let index = parseInt(get(values[0]).value);
-    let value1 = get(values[1]).value;
-
-    if (isNaN(index)){
-        alert("ValueError: Index must be of type Int");
-        return 1;
-    }
-
-    if (index >= univlst.length){
-        alert("IndexError: List Index out of Range");
-        return 1;
-    }
-
-    if (index < 0){
-        index = univlst.length+index;
-    }
+    let index = 0;
 
     univlst.splice(index,0,value1);
 
@@ -993,43 +896,18 @@ async function runinsert(data){
 }
 
 async function runpop(data){
-    if (data[1] != "pop"){
-        alert("Internal error: wrong runner called for index, code type was ",data[1]);
-        return 1;
-    }
-
-
-    if (univlst.length == 0){
-        alert("List is empty!")
-        return 1;
-    }
 
     let values = data[2];
 
-    // there should be two values
-    let index = get(values[0]).value;
+    // there should be no values
+    // let val = get(values[0]).value;
+
+    if (univlst.length == 0){
+        alert("Stack is empty!")
+        return 1;
+    }
     
-
-    if (String(index).replaceAll(" ","") == ""){
-        index = univlst.length-1;
-    }
-
-    index = parseInt(index);
-
-
-    if (isNaN(index)){
-        alert("ValueError: Index must be of type Int");
-        return 1;
-    }
-
-    if (index >= univlst.length){
-        alert("IndexError: List Index out of Range");
-        return 1;
-    }
-
-    if (index < 0){
-        index = univlst.length+index;
-    }
+    index = 0;
 
     univlst.splice(index, 1);
 
@@ -1125,21 +1003,15 @@ let torepopulate = 0;
 
 function getstatementbank(i){
     if (i == 0){
-        return `lst[${getlittleinput()}] = ${getlittleinput()}`;
+        return `stk.push(${getlittleinput()})`;
     } else if (i == 1){
-        return `lst.append(${getlittleinput()})`;
-    } else if (i == 2){
-        return `lst.insert(${getlittleinput()},${getlittleinput()})`;
-    } else {
-        return `lst.pop(${getlittleinput()})`
+        return `stk.pop()`;
     }
 }
 
 statements = [
-    `lst[${getlittleinput()}] = ${getlittleinput()}`,
-    `lst.append(${getlittleinput()})`,
-    `lst.insert(${getlittleinput()},${getlittleinput()})`,
-    `lst.pop(${getlittleinput()})`
+    `stk.push(${getlittleinput()})`,
+    `stk.pop()`
 ];
 
 let f1statements = 0;
@@ -1149,7 +1021,6 @@ let currentcode = [];
 adddropblock();
 
 let runspeed = "normal";
-
 
 jiniter= 0;
 while (jiniter < statements.length){
