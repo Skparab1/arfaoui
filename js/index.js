@@ -133,23 +133,6 @@ function closeinstructions(){
 
 
 
-
-
-
-
-
-
-
-
-// open the "how to use" if its the first time this user has opened this
-let bt1 = localStorage.getItem('binarytree');
-if (bt1 == null){
-    localStorage.setItem('binarytree','opened');
-    document.getElementById('instructions').style.display = 'block';
-    document.getElementById('instructions').style.opacity = 1;
-    document.getElementById('instructions').style.left = '25%';
-}
-
 // load the settings from localstorage
 let theme = localStorage.getItem('bttheme');
 let angle = localStorage.getItem('btangle');
@@ -157,9 +140,11 @@ let demospeed = localStorage.getItem('btspeed');
 
 let lasttoggle = new Date();
 
+
 if (theme == null){
-    localStorage.setItem("bttheme",'light');
-    theme = 'light';
+    localStorage.setItem("bttheme",'dark');
+    theme = 'dark';
+    forcedark();
 } else if (theme == 'dark'){
     forcedark();
 }

@@ -1528,9 +1528,11 @@ let rnzindex = 10;
 let stayingup = false;
 
 
+
 if (theme == null){
-    localStorage.setItem("bttheme",'light');
-    theme = 'light';
+    localStorage.setItem("bttheme",'dark');
+    theme = 'dark';
+    forcedark();
 } else if (theme == 'dark'){
     forcedark();
 }

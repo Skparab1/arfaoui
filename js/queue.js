@@ -468,11 +468,11 @@ function drop(ev) {
 
         let type = ""
         let repopulatet = 0;
-        if (indata1.includes("push")){
-            type = "push";
+        if (indata1.includes("enqueue")){
+            type = "enqueue";
             repopulatet = 0;
-        } else if (indata1.includes("pop")){
-            type = "pop";
+        } else if (indata1.includes("dequeue")){
+            type = "dequeue";
             repopulatet = 1;
         }
 
@@ -740,10 +740,10 @@ async function runall(){
         if ((typeof datanow !== 'undefined') && datanow != ""){
             console.log(currentcode)
             let cd;
-            if (datanow[1] == "push"){
-                cd = await runpush(datanow);
-            } else if (datanow[1] == "pop"){
-                cd = await runpop(datanow);
+            if (datanow[1] == "enqueue"){
+                cd = await runenqueue(datanow);
+            } else if (datanow[1] == "dequeue"){
+                cd = await rundequeue(datanow);
             }
             if (cd == 1){
                 // something errored
@@ -813,10 +813,10 @@ async function stepforward(){
     if ((typeof datanow !== 'undefined') && datanow != ""){
         console.log(currentcode)
         let cd;
-        if (datanow[1] == "push"){
-            cd = await runpush(datanow);
-        } else if (datanow[1] == "pop"){
-            cd = await runpop(datanow);
+        if (datanow[1] == "enqueue"){
+            cd = await runenqueue(datanow);
+        } else if (datanow[1] == "dequeue"){
+            cd = await rundequeue(datanow);
         }
 
         if (cd == 1){
@@ -854,25 +854,18 @@ async function stepforward(){
 }
 
 
-async function runpush(data){
+async function runenqueue(data){
 
     let values = data[2];
 
     // there should be only one value values
     let value1 = get(values[0]).value;
 
-    let index = 0;
+    let index = univlst.length;
 
-    univlst.splice(index,0,value1);
+    univlst.push(value1);
 
     let elstoshift = [];
-
-    let u = index;
-    while (u < univlst.length){
-        elstoshift.push("thenode"+u);
-        console.log("thenode"+u);
-        u += 1;
-    }
 
     glownodeyellow(index);
     glownodeyellow(index+1);
@@ -895,7 +888,7 @@ async function runpush(data){
     return 0;
 }
 
-async function runpop(data){
+async function rundequeue(data){
 
     let values = data[2];
 
@@ -903,7 +896,7 @@ async function runpop(data){
     // let val = get(values[0]).value;
 
     if (univlst.length == 0){
-        alert("Stack is empty!")
+        alert("Queue is empty!")
         return 1;
     }
     
@@ -964,6 +957,7 @@ let rnzindex = 10;
 let stayingup = false;
 
 
+
 if (theme == null){
     localStorage.setItem("bttheme",'dark');
     theme = 'dark';
@@ -971,6 +965,7 @@ if (theme == null){
 } else if (theme == 'dark'){
     forcedark();
 }
+
 
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
@@ -1004,15 +999,15 @@ let torepopulate = 0;
 
 function getstatementbank(i){
     if (i == 0){
-        return `stk.push(${getlittleinput()})`;
+        return `queue.enqueue(${getlittleinput()})`;
     } else if (i == 1){
-        return `stk.pop()`;
+        return `queue.dequeue()`;
     }
 }
 
 statements = [
-    `stk.push(${getlittleinput()})`,
-    `stk.pop()`
+    `queue.enqueue(${getlittleinput()})`,
+    `queue.dequeue()`
 ];
 
 let f1statements = 0;
