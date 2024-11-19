@@ -11,15 +11,14 @@
     <link rel="icon" type="image/x-icon" href="./assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Finlandica&display=swap" rel="stylesheet"> 
   </head>
-  <body>
-    <nav id="nav1">
+  <body style="height: 94vh; overflow-x: hidden;">
+    <nav id="nav1" style="height: 50px;">
       <ul class="nav-items navleft">
         <li class="headername">Data Structures Visualizer</li>
       </ul>
        
       <ul class="nav-items navright">
         <li title="Settings"><a onclick="openprefs(); openscreen();"><img src="assets/settings.png" height="30px" class="logo"></a></li>
-        <li title="Help"><a onclick="openel('instructions'); openscreen();" ><img src="assets/help.png" height="30px" class="logo" style="cursor: help;"></a></li>
         <li title="Report bug"><a href="https://github.com/skparab1/binarytree/issues/new" target="_blank"><img src="assets/reportbuggy.png" height="30px" class="logo"></a></li>
       </ul>
     </nav>
@@ -28,17 +27,62 @@
         <h1 id='head' style="font-size: 50px; color: rgba(0,0,0,0);">e</h1>
     </div>
 
+
+
+    <div class="fullwidth" style="height: 30%; overflow: visible; width: 200%;">
+      <a href="./ds/list.html">
+        <div class="thingpanel" id="panel1" style="background-image: url(./assets/lists1.png); background-size: cover;">
+          <div class="thingheader">
+            Lists
+          </div>
+        </div>
+      </a>
+
+      <a href="./ds/linkedlist.html">
+        <div class="thingpanel" id="panel2" style="background-image: url(./assets/linkedlists1.png); background-size: cover;">
+            <div class="thingheader">
+              Linked Lists
+            </div>
+        </div>
+      </a>
+
+      <a href="./ds/stack.html">
+        <div class="thingpanel" id="panel3" style="background-image: url(./assets/stacks2.png); background-size: cover;">
+            <div class="thingheader">
+              Stacks
+            </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="fullwidth" style="height: 30%; margin-top: 6%; overflow: visible; width: 200%;">
+      <a href="./ds/queue.html">
+        <div class="thingpanel" id="panel4" style="background-image: url(./assets/queues1.png); background-size: cover;">
+            <div class="thingheader">
+              Queues
+            </div>
+        </div>
+      </a>
+
+      <div class="thingpanel" id="panel5" style="background-image: url(./assets/binarytrees1.png); background-size: cover; cursor: not-allowed;">
+        <div class="thingheader">
+          Binary Trees
+        </div>
+      </div>
+
+      <div class="thingpanel" id="panel6" style="background-image: url(./assets/dictionaries.png); background-size: cover; cursor: not-allowed;">
+        <div class="thingheader">
+          Dictionaries
+        </div>
+      </div>
+    </div>
+
+
+
+
     <div id="screen" class="screen"></div>
     
-
-    <div class="largenotif" id="solutions">
-      <!-- warning: everything inside of this is overwritten by js function checkall. do not change this -->
-      <h1>Solutions</h1>
-      <h5 id="preordersol">Pre order: </h5>
-      <h5 id="inordersol">In order: </h5>
-      <h5 id="postordersol">Post order: </h5>
-      <div class="close" onclick="closesolutions();">Close</div>
-    </div>
+    
 
     <div class="largenotif" id="preferences" style="height: fit-content;">
       <h1 style="font-size: 25px;">Settings</h1>
@@ -62,60 +106,6 @@
       <div class="close" onclick="closeprefs(); closescreen();">Close</div>
     </div>
 
-
-    <div class="largenotif" id="randomtree" style="height: min-content; top: 15%;">
-
-      <h1 style="margin-bottom: 0px; font-size: 25px;">Generate random tree</h1>
-
-      <h3 style="margin-bottom: 0px; font-size: 25px;">Max number of levels</h3>
-      <select class='guess' name="numnodes" id="numnodes" onchange="initnums();">
-        <option value=2>2</option>
-        <option value=3>3</option>
-        <option value=4>4</option>
-        <option value=5>5</option>
-      </select>
-
-      <h3 style="margin-bottom: 0px; font-size: 25px;">Tree type</h3>
-      <select class='guess' name="treetype" id="treetype" onchange="localStorage.setItem('treetype',document.getElementById('treetype').value);">
-        <option value="alpha">Alphabetical</option>
-        <option value="numeric">Numerical</option>
-        <option value="rand">Random</option>
-      </select>
-      <div class="close" onclick="closeel('randomtree'); closescreen(); root = randtree(); redrawtree();">Generate</div>
-      <div class="close" onclick="closeel('randomtree'); closescreen();">Cancel</div>
-    </div>
-
-    <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
-      <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
-      <h5 style='font-size: 15px; margin: 10px;'>1. Construct a binary tree using the left/right buttons to add nodes and delete button to remove nodes or press "random tree" to generate a random tree.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>2. Type in guesses for results in output box at the bottom of your screen</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>3. Click "check answers" or "view solutions" to verify</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>4. Click "Light-up animation" to see light up animations of traversal</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>5. Click "Reset Tree" to start over</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>6. Click "Share Tree" share your tree with someone else</h5>
-      <div class="close" onclick="closeinstructions(); closescreen();">Close</div>
-    </div>
-
-    <div class="largenotif" id="sharetree" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
-      <h1 style='font-size: 25px; margin: 10px;'>Share Tree</h1>
-
-      <h5 style='font-size: 15px; margin: 18px;'>Send the following URL to someone to share your tree with them.</h5>
-
-      <div id="copysharelink" class="coolbutton" onclick="copyshare()">Copy link</div>
-      
-      <h5 id="shareurldisp" style='font-size: 20px; margin: 15px; padding: 10px; border-radius: 25px; color: var(--main); background-color: var(--bg);'></h5>
-
-      <div class="close" onclick="closeel('sharetree'); closescreen();">Close</div>
-    </div>
-
-
-
-    <!-- <img class="standaloneicon" id="x1" src="assets/redx.png" height="75px" alt="large red x">
-    <img class="standaloneicon" id="x2" src="assets/redx.png" height="75px" alt="large red x">
-    <img class="standaloneicon" id="x3" src="assets/redx.png" height="75px" alt="large red x">
-    <img class="standaloneicon" id="check1" src="assets/greencheck.png" height="75px" alt="green check">
-    <img class="standaloneicon" id="check2" src="assets/greencheck.png" height="75px" alt="green check">
-    <img class="standaloneicon" id="check3" src="assets/greencheck.png" height="75px" alt="green check"> -->
     <script src="js/index.js"></script>
 
   </body>

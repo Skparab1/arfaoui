@@ -43,43 +43,93 @@ function copyshare(){
     document.getElementById("copysharelink").textContent = "Copied!";
 }
 
-
-// open the background backdrop when a dialog is opened
-function openscreen(){
-    let el = document.getElementById("screen");
-    el.style.display = "block";
-    el.style.opacity = 0.4;
-
-    let res = document.getElementById("res");
-    res.style.opacity = 0.4;
-    stayingup = true;
+function openprefs(){
+    document.getElementById('preferences').style.display = 'block';
+    document.getElementById('preferences').style.opacity = 1;
+    document.getElementById('preferences').style.top = '25%';
 }
 
-// close the background backdrop
-function closescreen(){
-    console.log("called to close");
-    let el = document.getElementById("screen");
-    el.style.display = "none";
-    el.style.opacity = 0;
-
-    let res = document.getElementById("res");
-    res.style.opacity = 1;
-    stayingup = false;
+function openel(el){
+    document.getElementById(el).style.display = 'block';
+    document.getElementById(el).style.opacity = 1;
+    document.getElementById(el).style.top = '25%';
 }
 
-// force the theme to change to dark, if thats the saved theme
+function toggletheme(override){
+    var r = document.querySelector(':root');
+
+    let endtime = new Date();
+    var timediff = endtime - lasttoggle; 
+    lasttoggle = endtime;
+
+    if (timediff < 333 && !override){
+        return;
+    }
+
+    console.log('changeing from  '+theme);
+    if (theme == 'dark'){
+        // make light
+        theme = 'light';
+        localStorage.setItem('bttheme','light');
+        document.getElementById('theme').textContent = "Theme: (light)";
+        r.style.setProperty('--bg', 'white');
+        r.style.setProperty('--bgslight', 'rgba(255,255,255,0.6)');
+        r.style.setProperty('--contrast', 'black');
+        r.style.setProperty('--main', '#0d6efd');
+        r.style.setProperty('--secondary', '#0a4bad');
+        r.style.setProperty('--slight', 'rgb(220,220,220)');
+    } else {
+        // make dark
+        theme = 'dark';
+        localStorage.setItem('bttheme','dark');
+        document.getElementById('theme').textContent = "Theme: (dark)";
+        r.style.setProperty('--bgslight', 'rgba(30,30,30,0.6)');
+        r.style.setProperty('--bg', 'black');
+        r.style.setProperty('--contrast', 'white');
+        r.style.setProperty('--main', '#0d6efd');
+        r.style.setProperty('--secondary', '#0a4bad');
+        r.style.setProperty('--slight', 'rgb(30, 30, 30)');
+    }
+}
+
 function forcedark(){
     theme = 'dark';
     localStorage.setItem('bttheme','dark');
     document.getElementById('theme').textContent = "Theme: (dark)";
     
     var r = document.querySelector(':root');
+    r.style.setProperty('--bgslight', 'rgba(30,30,30,0.6)');
     r.style.setProperty('--bg', 'black');
     r.style.setProperty('--contrast', 'white');
     r.style.setProperty('--main', '#0d6efd');
-    r.style.setProperty('--slight', 'rgb(40, 40, 40)');
+    r.style.setProperty('--secondary', '#0a4bad');
+    r.style.setProperty('--slight', 'rgb(30, 30, 30)');
 }
 
+function closeprefs(){
+    //document.getElementById('solutions').style.display = 'none';
+    document.getElementById('preferences').style.opacity = 0;
+    document.getElementById('preferences').style.top = '100%';
+}
+
+function closeel(el){
+    //document.getElementById('solutions').style.display = 'none';
+    document.getElementById(el).style.opacity = 0;
+    document.getElementById(el).style.top = '100%';
+
+}
+
+function closesolutions(){
+    //document.getElementById('solutions').style.display = 'none';
+    document.getElementById('solutions').style.opacity = 0;
+    document.getElementById('solutions').style.top = '100%';
+}
+
+function closeinstructions(){
+    document.getElementById('instructions').style.top = '100%';
+    document.getElementById('instructions').style.opacity = 0;
+}
+  
 
 
 
@@ -115,6 +165,28 @@ if (theme == null){
 }
 
 const sleep = ms => new Promise(res => setTimeout(res, ms));
+
+function appearpanel(id){
+    document.getElementById("panel"+id).style.transition = "all 0.5s";
+    document.getElementById("panel"+id).style.marginLeft = "1.25%";
+    document.getElementById("panel"+id).style.opacity = 1;
+}
+
+(async () => {
+    let i = 1;
+    await sleep(500);
+
+    while (i <= 6){
+        appearpanel(i);
+        await sleep(100);
+        i += 1;
+    }
+
+    await sleep(500);
+
+    document.getElementById("panel"+5).style.opacity = 0.5;
+    document.getElementById("panel"+6).style.opacity = 0.5;
+})();
 
 
 
