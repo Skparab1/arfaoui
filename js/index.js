@@ -160,7 +160,7 @@ function appearpanel(id){
 (async () => {
     let i = 1;
     await sleep(500);
-
+    
     while (i <= 6){
         appearpanel(i);
         await sleep(100);

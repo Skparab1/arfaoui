@@ -854,12 +854,16 @@ async function stepforward(){
 }
 
 
-async function runenqueue(data){
+async function runenqueue(data, forceuse=null){
 
-    let values = data[2];
-
-    // there should be only one value values
-    let value1 = get(values[0]).value;
+    let values, value1;
+    if (forceuse === null){
+        values = data[2];
+        // there should be only one value values
+        value1 = get(values[0]).value;
+    } else {
+        value1 = forceuse;
+    }
 
     let index = univlst.length;
 

@@ -854,12 +854,18 @@ async function stepforward(){
 }
 
 
-async function runpush(data){
+async function runpush(data, forceuse=null){
 
-    let values = data[2];
+    let values, value1;
+    if (forceuse === null){
+        values = data[2];
+        // there should be only one value values
+        value1 = get(values[0]).value;
+    } else {
+        value1 = forceuse;
+    }
 
-    // there should be only one value values
-    let value1 = get(values[0]).value;
+
 
     let index = 0;
 
@@ -1004,15 +1010,15 @@ let torepopulate = 0;
 
 function getstatementbank(i){
     if (i == 0){
-        return `stk.push(${getlittleinput()})`;
+        return `stack.push(${getlittleinput()})`;
     } else if (i == 1){
-        return `stk.pop()`;
+        return `stack.pop()`;
     }
 }
 
 statements = [
-    `stk.push(${getlittleinput()})`,
-    `stk.pop()`
+    `stack.push(${getlittleinput()})`,
+    `stack.pop()`
 ];
 
 let f1statements = 0;
