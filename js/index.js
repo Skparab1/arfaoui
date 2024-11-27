@@ -169,7 +169,6 @@ function appearpanel(id){
 
     await sleep(500);
 
-    document.getElementById("panel"+5).style.opacity = 0.5;
     document.getElementById("panel"+6).style.opacity = 0.5;
 })();
 

@@ -1119,6 +1119,8 @@ async function runsetleft(data){
         return 1;
     }
 
+    recallibratenodes(nodearr[index].left)
+
     addleft(index, value1, true);
 
 
@@ -1161,6 +1163,8 @@ async function runsetright(data){
         alert("Node Invalid. Please ensure you have clicked on the input box and selected a node. In addition, check that addafter can be performed on the node, and that the node has not been deleted.");
         return 1;
     }
+
+    recallibratenodes(nodearr[index].right)
 
     addright(index, value1, true);
 
@@ -1211,6 +1215,8 @@ async function rundeleteleft(data){
         return 0;
     }
 
+    recallibratenodes(nodearr[index].left)
+
     leftidx = nodearr.indexOf(nodearr[index].left);
 
     delnode(leftidx);
@@ -1257,6 +1263,8 @@ async function rundeleteright(data){
         // do nothing
         return 0;
     }
+
+    recallibratenodes(nodearr[index].right)
 
     rightidx = nodearr.indexOf(nodearr[index].right);
 
@@ -1325,13 +1333,12 @@ function setdeleted(index){
     let i = 0;
     while (i < inputnums+1){
         let thisinp = get("littleinput"+i);
-
         try {
             let vl = String(thisinp.value);
 
             // alert(vl);
 
-            if (vl.includes(index)){
+            if (vl.includes("<selectednode>"+index)){
                 thisinp.value = "<DELETED NODE>";
             }
         } catch (error) {
@@ -1343,36 +1350,20 @@ function setdeleted(index){
 }
 
 
-function recallibratenodes(changedindex, shift){
-    let i = 0;
-    while (i < inputnums+1){
-        let thisinp = get("littleinput"+i);
+function recallibratenodes(deletedroot){
 
-        try {
-            let vl = String(thisinp.value);
-
-            if (vl.includes("<selectednode>")){
-    
-                vl = parseInt(vl.replace("<selectednode>",""));
-    
-                // suppose this was node 1.
-                // changed index is the lst index where things have been unchanged
-    
-                if (vl < changedindex){
-                    // all ok
-                } else {
-                    // if shift == +1, everything got moved to the right, so upgrade index by 1
-                    // else downgrade by 1
-                    vl += shift;
-                    thisinp.value = "<selectednode>"+vl;
-                }
-            }
-        } catch (error) {
-            
-        }
-
-        i += 1;
+    if (deletedroot == null){
+        return;
     }
+
+    indexofthis = nodearr.indexOf(deletedroot);
+
+    console.log("setting deleted", indexofthis);
+
+    setdeleted(indexofthis);
+
+    recallibratenodes(deletedroot.right);
+    recallibratenodes(deletedroot.left);
 }
 
 
