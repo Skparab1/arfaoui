@@ -825,6 +825,7 @@ async function stepforward(){
             glowreceiver(datanow[0]);
             totalerrors += 1;
         }
+        
         numactuallyrun += 1;
         succeeded = true;
     }

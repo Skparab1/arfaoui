@@ -28,7 +28,7 @@
       <ul class="nav-items navright">
         <li title="Settings"><a onclick="openprefs(); openscreen();"><img src="../assets/settings.png" height="30px" class="logo"></a></li>
         <li title="Help"><a onclick="openel('instructions'); openscreen();" ><img src="../assets/help.png" height="30px" class="logo"></a></li>
-        <li title="Report bug"><a href="https://github.com/skparab1/binarytree/issues/new" target="_blank"><img src="../assets/reportbuggy.png" height="30px" class="logo"></a></li>
+        <li title="Report bug"><a href="https://github.com/skparab1/arfaoui/issues/new" target="_blank"><img src="../assets/reportbuggy.png" height="30px" class="logo"></a></li>
       </ul>
     </nav>
 
@@ -79,9 +79,9 @@
         <span class="slider round"></span>
       </label>
 
-      <h3 style="font-size: 15px; margin-bottom: 0px; margin-top: 0px;" id="animwait">Light-up animation delay time: 1500ms</h3>
+      <h3 style="font-size: 15px; margin-bottom: 0px; margin-top: 0px;" id="animwait">Light-up animation delay time: 2750ms</h3>
       <div class="slide2container" style="margin-top: -20px;">
-        <input type="range" min="100" max="5000" value="1500" step="10" class="slider2" name="waittime" id="waittime" onchange="document.getElementById('animwait').textContent = 'Light-up animation delay time: '+document.getElementById('waittime').value+'ms'; localStorage.setItem('btspeed',document.getElementById('waittime').value);">
+        <input type="range" min="100" max="5000" value="2750" step="10" class="slider2" name="waittime" id="waittime" oninput="document.getElementById('animwait').textContent = 'Light-up animation delay time: '+document.getElementById('waittime').value+'ms'; localStorage.setItem('btspeed',document.getElementById('waittime').value);">
       </div>
 
       <div class="close" onclick="closeprefs(); closescreen();">Close</div>

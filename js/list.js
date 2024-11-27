@@ -623,7 +623,7 @@ function adddropblock(){
 
     div1.innerHTML += `
         <div    class="blockreceiver"
-                style="margin-left: 25px" 
+                style="margin-left: 25px;" 
                 id="blockreceiver${f1statements}" 
                 droppable="true" 
                 ondrop="

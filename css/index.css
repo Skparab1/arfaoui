@@ -69,6 +69,27 @@ button {
   transition: font-size 0.5s;
 }
 
+
+
+.nodebin{
+  width: 100px;
+  height: 50px;
+  font-size: 20px;
+  border: 4px solid var(--main);
+  color: var(--contrast);
+  text-align: center;
+  background-color: var(--bg);
+}
+
+.nodevalbin{
+  width: 100%;
+  background: var(--bg);
+  color: var(--main);
+  border: 0px;
+  font-size: 20px;
+  text-align: center;
+}
+
 .nodecontrols{
   opacity: 0;
   transition: opacity 0.2s;
