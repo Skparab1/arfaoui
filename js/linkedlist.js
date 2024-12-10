@@ -728,6 +728,7 @@ function adddraggable(ctr){
     `;
 
     elfar += 1;
+    elfaruponly += 1;
 
     if (ctr < 4){
         document.getElementById("codebank1").innerHTML += htm;
@@ -754,12 +755,13 @@ function repopulate(i){
     }
 
     el.innerHTML = `
-    <div id="drag${elfar}" class="command" draggable="true" droppable="false" ondragstart="lastdragnestable=false; drag(event);">
+    <div id="drag${elfaruponly}" class="command" draggable="true" droppable="false" ondragstart="lastdragnestable=false; drag(event);">
     ${getstatementbank(i)}
     </div>
     `;
 
     elfar += 1;
+    elfaruponly += 1;
 }
 
 
@@ -1545,6 +1547,7 @@ let univlst = [1,2,3,4,5];
 drawlist(univlst);
 
 let elfar = 0;
+let elfaruponly = 0;
 let inputnums = -1;
 
 let fillinput = 0;

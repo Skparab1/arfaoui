@@ -758,6 +758,7 @@ function adddraggable(ctr){
     `;
 
     elfar += 1;
+    elfaruponly += 1;
 
     if (ctr < 3){
         document.getElementById("codebank1").innerHTML += htm;
@@ -784,12 +785,13 @@ function repopulate(i){
     }
 
     el.innerHTML = `
-    <div id="drag${elfar}" class="command" style="font-size: 17px;" draggable="true" droppable="false" ondragstart="lastdragnestable=false; drag(event);">
+    <div id="drag${elfaruponly}" class="command" style="font-size: 17px;" draggable="true" droppable="false" ondragstart="lastdragnestable=false; drag(event);">
     ${getstatementbank(i)}
     </div>
     `;
 
     elfar += 1;
+    elfaruponly += 1;
 }
 
 
@@ -797,7 +799,7 @@ function repopulate(i){
 function deletereceiver(id){
     // first check if you even can
 
-    if (elfar <= statements.length){
+    if (elfar <= statements.length-1){
         return;
     }
 
@@ -1418,6 +1420,7 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 
 
 let elfar = 0;
+let elfaruponly = 0;
 let inputnums = -1;
 
 let fillinput = 0;

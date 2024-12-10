@@ -3,8 +3,8 @@
   <head>
     <meta charset='utf-8'>
     <meta name='og:viewport' content='width=device-width,initial-scale=1'>
-    <meta name="og:description" content="Data Structures Visualizer - Lists">
-    <title>Data Structures Visualizer - Stack</title>
+    <meta name="og:description" content="Data Structures Visualizer - Hashmap Chaining">
+    <title>Data Structures Visualizer - Hashmap Chaining</title>
     <link rel="stylesheet" href="../css/index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
   <body>
     <nav id="nav1">
       <ul class="nav-items navleft">
-        <li class="headername">Stack</li>
+        <li class="headername">Hashmap Chaining</li>
       </ul>
       <ul class="nav-items navcenter" id="nav">
         <li><a class="larget" href="../index.html">Main Menu</a></li>
@@ -35,9 +35,10 @@
     </nav>
 
     <div class="fullwidth">
-        <h1 id='head' style="font-size: 50px; color: rgba(0,0,0,0);">e</h1>
+        <h1 id='head' style="font-size: 30px; color: rgba(0,0,0,0);">e</h1>
     </div>
 
+    <h2 style="text-align: center;" id="hashfunction">MAD Hash Function: </h2>
 
 
     <div id="treeholder">
@@ -51,12 +52,11 @@
 
     <div id='res' class="results">
       <div class="fullwidth">
-        <div class="quarterleft" id="codebank" style="border-right: 3px solid var(--main); height: 360px;">
+        <div class="quarterleft" id="codebank" style="border-right: 3px solid var(--main); height: 355px;">
           <h2>Code Bank</h2>
         </div>
         <div class="halfleft">
-          <div class="larget" onclick="runpush(null, 0);" style="display: fixed; width: 7%; margin-left: 82%;">Push</div>
-          <div class="larget" onclick="runpop([null, null, null]);" style="display: fixed; width: 7%; margin-left: 91%; margin-top: -43.5px;">Pop</div>
+          <div class="larget" onclick="runadd([null,null,['quickbuttonadd']]);" style="display: fixed; width: 14%; margin-left: 84.5%;">Add <input onclick="event.stopPropagation();" class="littleinputlarge" id="quickbuttonadd"></div>
           <h2 style="margin-top: -33px;">Current Code</h2>
           <div class="codestatementholder" id="currentcode">
           </div>
@@ -116,9 +116,9 @@
 
     <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
       <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
-      <h5 style='font-size: 15px; margin: 10px;'>1. Modify the stack by hovering over an element and using the "left/right" buttons to add elements and "delete" button to remove elements.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>1. Reload the page to generate new hash functions.</h5>
       <h5 style='font-size: 15px; margin: 10px;'>2. Drag blocks of code from the code bank to the current code.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>3. Click the digits in blue to change the list contents and function inputs.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>3. Click the digits in blue to change the function inputs.</h5>
       <h5 style='font-size: 15px; margin: 10px;'>4. Press "run all" to run all the code instantly.</h5>
       <h5 style='font-size: 15px; margin: 10px;'>5. Press "slowly run all" to run the code with delays between each block.</h5>
       <h5 style='font-size: 15px; margin: 10px;'>6. Press "step" to run one one block of code at a time.</h5>
@@ -145,7 +145,7 @@
     <img class="standaloneicon" id="check1" src="assets/greencheck.png" height="75px" alt="green check">
     <img class="standaloneicon" id="check2" src="assets/greencheck.png" height="75px" alt="green check">
     <img class="standaloneicon" id="check3" src="assets/greencheck.png" height="75px" alt="green check"> -->
-    <script src="../js/stack.js"></script>
+    <script src="../js/hashmapchaining.js"></script>
 
   </body>
 </html>

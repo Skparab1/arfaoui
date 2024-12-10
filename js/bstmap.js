@@ -856,7 +856,7 @@ function repopulate(i){
 function deletereceiver(id){
     // first check if you even can
 
-    if (elfar <= statements.length-1){
+    if (elfaruponly <= statements.length+1){
         return;
     }
 

@@ -1,7 +1,5 @@
-// DS visualizer: stacks
+// DS visualizer: hash hap chaining
 
-
-// ah how nice it is to touch javascript after so long.
 
 // How about an interactive space where students can experiment 
 // with data structures such as lists, stacks, queues, and dictionaries. 
@@ -28,7 +26,19 @@ function drawlist(lst){
     let i = 0;
     while (i < lst.length){
 
-        drawnode(lst, i, startx, starty);
+        if (lst[i] == "None"){
+            drawnode(lst, i, startx, starty, "None");
+        } else {
+            console.log(String(lst[i]));
+            let lstels = String(lst[i]).split(",");
+
+            let j = 0;
+            while (j < lstels.length){
+                drawnode(lst, j, startx, starty+50*j, lstels[j]);
+                j += 1;
+            }
+        }
+    
 
         i += 1;
         startx += 96;
@@ -52,7 +62,7 @@ function addleft(i){
 }
 
 
-function drawnode(lst, index, x, y){
+function drawnode(lst, index, x, y, content){
 
     // create element
     const div = document.createElement('div');
@@ -62,16 +72,8 @@ function drawnode(lst, index, x, y){
       
     // put the value into the element
     div.innerHTML = `
-    <input id='val${thisnum}' type='text' class='nodeval' value='${lst[index]}' oninput="modvalue(${thisnum});">
+    <input id='val${thisnum}' type='text' class='nodeval' value='${content}' oninput="modvalue(${thisnum});" disabled>
     `;
-
-    div.innerHTML += `
-    
-    <div class="nodecontrols" id='controls${thisnum}'>
-        <button id='leftadder${thisnum}' class='nodeadderleft' onclick='addleft(${thisnum});'>left</button>
-        <button id='rightadder${thisnum}' class='nodeadderright' onclick='addright(${thisnum});'>right</button>
-        <button id='deletenode${thisnum}' onclick='delnode(${thisnum});' class='deletenode'>del</button>
-    </div>`;
 
     // position the element
     div.style.position = 'absolute';
@@ -81,20 +83,6 @@ function drawnode(lst, index, x, y){
     // set the id and classname
     div.id = 'thenode'+String(thisnum);
     div.className = 'node';
-
-
-    // if a node is clicked then bring it to the brong
-    div.onclick = function() {document.getElementById(div.id).style.zIndex = rnzindex; rnzindex += 1;};
-
-    div.onmouseover = function() {
-        document.getElementById(div.id.replace("thenode","controls")).style.opacity = 1;
-        document.getElementById(div.id.replace("thenode","val")).style.fontSize = "20px";
-    };
-    div.onmouseout = function() {
-        document.getElementById(div.id.replace("thenode","controls")).style.opacity = 0;
-        document.getElementById(div.id.replace("thenode","val")).style.fontSize = "33px";
-    };
-
 
     // rnzindex is the z index
     // this should be the highest for the most recently clicked elements
@@ -468,12 +456,9 @@ function drop(ev) {
 
         let type = ""
         let repopulatet = 0;
-        if (indata1.includes("push")){
-            type = "push";
+        if (indata1.includes("dict[")){
+            type = "add";
             repopulatet = 0;
-        } else if (indata1.includes("pop")){
-            type = "pop";
-            repopulatet = 1;
         }
 
         let inputpossible = indata1.split('<input class="littleinput" id="');
@@ -550,6 +535,10 @@ function repopulateall(){
     }
 }
 
+function hash(input){
+
+}
+
 function repopulate(i){
     let el = document.getElementById("receiver"+i);
     // console.log("loggy beeny", el.innerHTML.includes("div"));
@@ -619,7 +608,7 @@ function adddropblock(){
 
     div1.innerHTML += `
         <div    class="blockreceiver"
-                style="margin-left: 25px" 
+                style="margin-left: 25px;" 
                 id="blockreceiver${f1statements}" 
                 droppable="true" 
                 ondrop="
@@ -724,6 +713,7 @@ function getnextstatement(alreadyrun){
 
     return lowestdata;
 }
+
 async function runall(){
     resetreceiverglows();
 
@@ -742,15 +732,12 @@ async function runall(){
         if ((typeof datanow !== 'undefined') && datanow != ""){
             console.log(currentcode)
             let cd;
-            if (datanow[1] == "push"){
-                cd = await runpush(datanow);
-            } else if (datanow[1] == "pop"){
-                cd = await runpop(datanow);
+            if (datanow[1] == "add"){
+                cd = await runadd(datanow);
             }
             if (cd == 1){
                 // something errored
                 errorscount += 1;
-                console.log("errored on ", datanow[0]);
                 glowreceiver(datanow[0]);
             }
         }
@@ -765,7 +752,7 @@ async function runall(){
 }
 
 async function animrunall(){
-    runspeed = "normal"
+    runspeed = "normal";
     stepinsession = true;
     while (stepinsession){
         stepforward();
@@ -782,6 +769,7 @@ let stepsofar = [];
 
 async function stepforward(){
     runspeed = "normal";
+    
     resetreceiverglows();
     if (!stepinsession){
         stepctr = 0;
@@ -815,10 +803,8 @@ async function stepforward(){
     if ((typeof datanow !== 'undefined') && datanow != ""){
         console.log(currentcode)
         let cd;
-        if (datanow[1] == "push"){
-            cd = await runpush(datanow);
-        } else if (datanow[1] == "pop"){
-            cd = await runpop(datanow);
+        if (datanow[1] == "add"){
+            cd = await runadd(datanow);
         }
 
         if (cd == 1){
@@ -827,7 +813,6 @@ async function stepforward(){
             glowreceiver(datanow[0]);
             totalerrors += 1;
         }
-        
         numactuallyrun += 1;
         succeeded = true;
     }
@@ -838,120 +823,93 @@ async function stepforward(){
         stepforward();
     }
 
-    if (stepinsession){
-        let ntf = get("runnotif");
-        ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-statements.length)+".";    
-    }
-
+    let ntf = get("runnotif");
+    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-4)+".";
     if (get("blockreceiver"+datanow[0]) == null){
+        let ntf = get("runnotif");
+        ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
+
         stepctr = 0;
         numactuallyrun = 0;
         stepsofar = [];
         totalerrors = 0;
         stepinsession = false;
-
-        let ntf = get("runnotif");
-        ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
         return;
     }
 }
 
 
-async function runpush(data, forceuse=null){
-
-    let values, value1;
-    if (forceuse === null){
-        values = data[2];
-        // there should be only one value values
-        value1 = get(values[0]).value;
-    } else {
-        value1 = forceuse;
-    }
-
-
-
-    let index = 0;
-
-    univlst.splice(index,0,value1);
-
-    let elstoshift = [];
-
-    let u = index;
-    while (u < univlst.length){
-        elstoshift.push("thenode"+u);
-        console.log("thenode"+u);
-        u += 1;
-    }
-
-    glownodeyellow(index);
-    glownodeyellow(index+1);
-    glownodeyellow(index-1);
-
-    await animateshiftrightby1(elstoshift);
-
-    drawlist(univlst);
-
-    glownodeyellow(index);
-    glownodeyellow(index+1);
-    glownodeyellow(index-1);
-
-    await transitionupappear("thenode"+index);
-
-    drawlist(univlst);
-
-    glownodeyellow(index);
-
-    return 0;
-}
-
-async function runpop(data){
+async function runadd(data){
 
     let values = data[2];
 
-    // there should be no values
-    // let val = get(values[0]).value;
+    // there should be one values
+    let value1 = get(values[0]).value;
 
-    if (univlst.length == 0){
-        alert("Stack is empty!")
+    if (isNaN(parseInt(value1))){
+        alert("This demo hash function only accepts integers!");
         return 1;
     }
-    
-    index = 0;
 
-    univlst.splice(index, 1);
+    value1 = parseInt(value1);
 
-    glownodeyellow(index);
-    glownodeyellow(index+1);
-    glownodeyellow(index-1);
+    let hashed = dohash(value1);
 
-    await transitiondowndisappear("thenode"+index);
-
-    let elstoshift = [];
-
-    let u = index+1;
-    while (u < univlst.length+1){
-        elstoshift.push("thenode"+u);
-        u += 1;
+    if (univlst[hashed] == "None"){
+        univlst[hashed] = String(value1);
+    } else {
+        univlst[hashed] += ","+String(value1);
     }
 
-    await animateshiftleftby1(elstoshift);
+    glownodeyellow(univlst.length-1);
+    glownodeyellow(univlst.length-2);
 
     drawlist(univlst);
 
-    let glowindex;
-    if (index == 0){
-        glowindex = 0;
-    } else {
-        glowindex = index-1
+    glownodeyellow(univlst.length-1);
+    glownodeyellow(univlst.length-2);
+
+    if (runspeed == "normal"){
+        await sleep();
     }
 
-    glownodeyellow(glowindex);
+    drawlist(univlst);
+
+    glownodeyellow(hashed);
 
     return 0;
 }
 
+function dohash(num){
+    return ((hasha*num + hashb) % hashp) % 10;
+}
 
+const getPrimes = (min, max) => {
+    const result = Array(max + 1)
+        .fill(0)
+        .map((_, i) => i);
+    for (let i = 2; i <= Math.sqrt(max + 1); i++) {
+        for (let j = i ** 2; j < max + 1; j += i) delete result[j];
+    }
+    return Object.values(result.slice(Math.max(min, 2)));
+};
 
+const getRandNum = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+const getRandPrime = (min, max) => {
+    const primes = getPrimes(min, max);
+    return primes[getRandNum(0, primes.length - 1)];
+};
+
+// generate the mad hash
+
+let hashp = getRandPrime(1,102);
+let hasha = getRandNum(1,hashp);
+let hashb = getRandNum(0,hashp);
+
+get("hashfunction").textContent = `MAD Hash Function: h(k) = [(${hasha}k + ${hashb}) mod ${hashp}] mod 10`
 
 // open the "how to use" if its the first time this user has opened this
 let bt1 = localStorage.getItem('binarytree');
@@ -973,6 +931,7 @@ let rnzindex = 10;
 let stayingup = false;
 
 
+
 if (theme == null){
     localStorage.setItem("bttheme",'dark');
     theme = 'dark';
@@ -984,7 +943,7 @@ if (theme == null){
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
 
-let univlst = [1,2,3,4,5];
+let univlst = ["None","None","None","None","None","None","None","None","None","None"];
 
 drawlist(univlst);
 
@@ -1014,15 +973,12 @@ let torepopulate = 0;
 
 function getstatementbank(i){
     if (i == 0){
-        return `stack.push(${getlittleinput()})`;
-    } else if (i == 1){
-        return `stack.pop()`;
+        return `dict[${getlittleinput()}] = None`;
     }
 }
 
-statements = [
-    `stack.push(${getlittleinput()})`,
-    `stack.pop()`
+let statements = [
+    `dict[${getlittleinput()}] = None`,
 ];
 
 let f1statements = 0;
@@ -1032,6 +988,7 @@ let currentcode = [];
 adddropblock();
 
 let runspeed = "normal";
+
 
 jiniter= 0;
 while (jiniter < statements.length){
