@@ -29,14 +29,7 @@ function drawlist(lst){
         if (lst[i] == "None"){
             drawnode(lst, i, startx, starty, "None");
         } else {
-            console.log(String(lst[i]));
-            let lstels = String(lst[i]).split(",");
-
-            let j = 0;
-            while (j < lstels.length){
-                drawnode(lst, j, startx, starty+50*j, lstels[j]);
-                j += 1;
-            }
+            drawnode(lst, i, startx, starty, lst[i]);
         }
     
 
@@ -72,7 +65,7 @@ function drawnode(lst, index, x, y, content){
       
     // put the value into the element
     div.innerHTML = `
-    <input id='val${thisnum}' type='text' class='nodeval' value='${content}' oninput="modvalue(${thisnum});" disabled>
+    <input id='val${thisnum}' type='text' class='nodeval' value='${content}' disabled>
     `;
 
     // position the element
@@ -90,6 +83,43 @@ function drawnode(lst, index, x, y, content){
 
     // put the element in
     treeholder.appendChild(div);
+}
+
+
+
+function drawdemonode(xspaces, content){
+
+    let y = 110;
+
+    let x = 100+96*xspaces;
+
+    // create element
+    const div = document.createElement('div');
+
+      
+    // put the value into the element
+    div.innerHTML = `
+    <input id='valdemo' type='text' class='nodeval' value='${content}' disabled>
+    <h2 style="color: white;">Probing...</h2>
+    `;
+
+    // position the element
+    div.style.position = 'absolute';
+    div.style.marginLeft = x+'px';
+    div.style.marginTop = y+'px';
+
+    // set the id and classname
+    div.id = 'thenodedemo';
+    div.className = 'node';
+
+    // rnzindex is the z index
+    // this should be the highest for the most recently clicked elements
+    rnzindex += 1;
+
+    // put the element in
+    treeholder.appendChild(div);
+
+    treeholder.innerHTML += `<h2 style="color: white; position: absolute; left: ${x}px; top: ${y+170}px;">Probing...</h2>`;
 }
 
 function modvalue(id){
@@ -685,6 +715,18 @@ function glownodeyellow(id) {
     }
 }
 
+function glownodered(id) {
+
+    try {
+        console.log("glownode",id);
+        let el = get("thenode"+id);
+        el.scrollIntoView({ block: 'end',  behavior: 'smooth' });
+        el.style.boxShadow = '7px 7px 5px rgba(255, 100, 100, 0.7)';
+    } catch (error) {
+        
+    }
+}
+
 function glowreceiver(id) {
     let el = get("blockreceiver"+id);
     el.scrollIntoView({ block: 'end',  behavior: 'smooth' });
@@ -747,11 +789,22 @@ async function runall(){
     drawlist(univlst);
 }
 
+let currentlyprobing = false;
+
 async function animrunall(){
     runspeed = "normal";
     stepinsession = true;
     while (stepinsession){
         stepforward();
+
+        console.log(currentlyprobing);
+
+        while (currentlyprobing){
+            await sleep(100);
+        }
+
+        console.log(currentlyprobing);
+
         await sleep(get("waittime").value);
     }
 }
@@ -820,7 +873,7 @@ async function stepforward(){
     }
 
     let ntf = get("runnotif");
-    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-4)+".";
+    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-statements.length)+".";
     if (get("blockreceiver"+datanow[0]) == null){
         let ntf = get("runnotif");
         ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
@@ -834,21 +887,35 @@ async function stepforward(){
     }
 }
 
-function rehash(){
+function rehash(randomhash, increasefactor){
+
+    let storespeed = runspeed;
+
+    runspeed = "expedited";
+
     let newunivlst = [];
     let i = 0;
-    while (i < 2*univlst.length){
+    while (i < increasefactor*univlst.length){
         newunivlst.push("None");
         i += 1;
     }
 
     // make a new hash function
 
-    hashp = getRandPrime(1,102);
-    hasha = getRandNum(1,hashp);
-    hashb = getRandNum(0,hashp);
+    if (randomhash){
+        hashp = getRandPrime(1,102);
+        hasha = getRandNum(1,hashp);
+        hashb = getRandNum(0,hashp);    
+    }
 
-    get("hashfunction").textContent = `MAD Hash Function: h(k) = [(${hasha}k + ${hashb}) mod ${hashp}] mod ${newunivlst.length}, Quadratic probing`;
+    get("hashfunction").innerHTML = `MAD Hash Function: h(k) = [(
+        <span style="color: var(--main);">${hasha}</span>
+        k + 
+        <span style="color: var(--main);">${hashb}</span>
+        ) mod 
+        <span style="color: var(--main);">${hashp}</span>
+        ] mod ${univlst.length}, Quadratic probing`;
+
 
     let oldlst = univlst;
     univlst = newunivlst;
@@ -858,6 +925,8 @@ function rehash(){
         runadd(null, parseInt(oldlst[i]));
         i += 1;
     }
+
+    runspeed = storespeed;
 }
 
 
@@ -881,19 +950,47 @@ async function runadd(data, forceval=null){
         value1 = parseInt(value1);
     }
 
+    // alert("trying to add", value1);
+    console.log("trying to add", value1);
+
     
 
     let hashed = dohash(value1);
 
     // probe through it
 
-    if (univlst.indexOf("None") == -1){
-        rehash();
+    // alert("dohash done");
+
+
+    if (univlst.indexOf("None") == -1){ // no more space
+        rehash(true, 2);
     }
 
+    // alert("possible rehash done");
+
+
     i = 1;
+    currentlyprobing = true;
     while (univlst[hashed] != "None"){
-        // once it is = 1 we can continue
+        // once it is == None we can continue
+        // alert("probed a bit");
+        drawdemonode(hashed, value1);
+        glownodered("demo");
+
+        // alert("probing for something");
+        console.log("looking to insert",value1,"at",hashed);
+
+        console.log("univlst",univlst);
+
+        
+        if (runspeed != "expedited"){
+            await sleep(2500);
+            glownodered("demo");
+        }
+
+        drawlist(univlst);
+
+        
         hashed += i*i;
         hashed = hashed % univlst.length;
         i += 1;
@@ -922,7 +1019,38 @@ async function runadd(data, forceval=null){
 
     glownodeyellow(hashed);
 
+    currentlyprobing = false;
+
     return 0;
+}
+
+
+function changehash(){
+    // check each of the input
+
+    let storespeed = runspeed;
+
+    runspeed = "expedited";
+
+    let newhasha = get("hasha").value;
+    let newhashb = get("hashb").value;
+    let newhashp = get("hashp").value;
+
+    if (isNaN(parseInt(newhasha)) || isNaN(parseInt(newhashb)) || isNaN(parseInt(newhashp))){
+        alert("Hash function parameters must be integers!");
+        get("hasha").value = hasha;
+        get("hashb").value = hashb;
+        get("hashk").value = hashk;
+        return;
+    }
+
+    hasha = newhasha;
+    hashb = newhashb;
+    hashp = newhashp;
+
+    rehash(false, 1);
+
+    runspeed = storespeed;
 }
 
 function dohash(num){
@@ -948,13 +1076,24 @@ const getRandPrime = (min, max) => {
     return primes[getRandNum(0, primes.length - 1)];
 };
 
+
+
+let univlst = ["None","None","None","None","None","None","None","None","None","None"];
+
+
 // generate the mad hash
 
 let hashp = getRandPrime(1,102);
 let hasha = getRandNum(1,hashp);
 let hashb = getRandNum(0,hashp);
 
-get("hashfunction").textContent = `MAD Hash Function: h(k) = [(${hasha}k + ${hashb}) mod ${hashp}] mod 10, Quadratic probing`;
+get("hashfunction").innerHTML = `MAD Hash Function: h(k) = [(
+    <span style="color: var(--main);">${hasha}</span>
+    k + 
+    <span style="color: var(--main);">${hashb}</span>
+    ) mod 
+    <span style="color: var(--main);">${hashp}</span>
+    ] mod ${univlst.length}, Quadratic probing`;
 
 // open the "how to use" if its the first time this user has opened this
 let bt1 = localStorage.getItem('binarytree');
@@ -987,8 +1126,6 @@ if (theme == null){
 
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
-
-let univlst = ["None","None","None","None","None","None","None","None","None","None"];
 
 drawlist(univlst);
 

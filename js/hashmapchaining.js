@@ -824,7 +824,7 @@ async function stepforward(){
     }
 
     let ntf = get("runnotif");
-    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-4)+".";
+    ntf.textContent = "Ran step "+numactuallyrun+" of "+(elfar-statements.length)+".";
     if (get("blockreceiver"+datanow[0]) == null){
         let ntf = get("runnotif");
         ntf.textContent += "\nFinished running with "+totalerrors+" errors.";
