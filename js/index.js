@@ -161,7 +161,7 @@ function appearpanel(id){
     let i = 1;
     await sleep(500);
     
-    while (i <= 6){
+    while (i <= 8){
         appearpanel(i);
         await sleep(100);
         i += 1;
@@ -169,7 +169,9 @@ function appearpanel(id){
 
     await sleep(500);
 
-    document.getElementById("panel"+6).style.opacity = 0.5;
+    document.getElementById("panel"+7).style.opacity = 0.5;
+    document.getElementById("panel"+8).style.opacity = 0.5;
+
 })();
 
 

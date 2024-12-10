@@ -3,32 +3,31 @@
   <head>
     <meta charset='utf-8'>
     <meta name='og:viewport' content='width=device-width,initial-scale=1'>
-    <meta name="og:description" content="Data Structures Visualizer - Linked Lists">
-    <title>Data Structures Visualizer - Linked Lists</title>
+    <meta name="og:description" content="Data Structures Visualizer - BST Map">
+    <title>Data Structures Visualizer - BST Map</title>
     <link rel="stylesheet" href="../css/index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Finlandica&display=swap" rel="stylesheet"> 
   </head>
-  <body>
+  <body style="height: 1000px;">
     <nav id="nav1">
       <ul class="nav-items navleft">
-        <li class="headername">Linked Lists</li>
+        <li class="headername">BST Map</li>
       </ul>
       <ul class="nav-items navcenter" id="nav">
-        <ul class="nav-items navcenter" id="nav">
-          <li><a class="larget" href="../index.html">Main Menu</a></li>
-          <li><a class="larget" href="../ds/list.html">List</a></li>
-          <li><a class="larget" href="../ds/linkedlist.html">Linked List</a></li>
-          <li><a class="larget" href="../ds/stack.html">Stack</a></li>
-          <li><a class="larget" href="../ds/queue.html">Queue</a></li>
-          <li><a class="larget" href="../ds/binarytree.html">Binary Tree</a></li>
-          <li><a class="larget" href="../ds/bstmap.html">BST Map</a></li>
-          <li><a class="larget_disabled">Hash Map Chaining</a></li>
-          <li><a class="larget_disabled">Hash Map Probing</a></li>
-        </ul>
+        <li><a class="larget" href="../index.html">Main Menu</a></li>
+        <li><a class="larget" href="../ds/list.html">List</a></li>
+        <li><a class="larget" href="../ds/linkedlist.html">Linked List</a></li>
+        <li><a class="larget" href="../ds/stack.html">Stack</a></li>
+        <li><a class="larget" href="../ds/queue.html">Queue</a></li>
+        <li><a class="larget" href="../ds/binarytree.html">Binary Tree</a></li>
+        <li><a class="larget" href="../ds/bstmap.html">BST Map</a></li>
+        <li><a class="larget_disabled">Hash Map Chaining</a></li>
+        <li><a class="larget_disabled">Hash Map Probing</a></li>
       </ul>
+      
       <ul class="nav-items navright">
         <li title="Settings"><a onclick="openprefs(); openscreen();"><img src="../assets/settings.png" height="30px" class="logo"></a></li>
         <li title="Help"><a onclick="openel('instructions'); openscreen();" ><img src="../assets/help.png" height="30px" class="logo"></a></li>
@@ -59,18 +58,14 @@
 
     <div id='res' class="results">
       <div class="fullwidth">
-        <div class="halfleft" id="codebank" style="border-right: 3px solid var(--main);">
+        <div class="quarterleft" id="codebank" style="border-right: 3px solid var(--main); height: 360px;">
           <h2>Code Bank</h2>
-          <div class="halfleft" id="codebank1">
-
-          </div>
-          <div class="halfleft" id="codebank2">
-
-          </div>
         </div>
-        <div class="quarterleft">
-          <h2>Current Code</h2>
-          <div class="codestatementholder" id="currentcode" style="width: 100%; margin-left: 0%;">
+        <div class="halfleft">
+          <div class="larget" onclick="facilitaterun('quickbuttonadd');" style="display: fixed; width: 14%; margin-left: 65%;">Add <input onclick="event.stopPropagation();" class="littleinputlarge" id="quickbuttonadd"></div>
+          <div class="larget" onclick="rundelete([null,null,['quickbuttondel']]);" style="display: fixed; width: 18%; margin-left: 80.45%; margin-top: -50px;">Remove <input onclick="event.stopPropagation();" class="littleinputlarge" id="quickbuttondel"></div>
+          <h2 style="margin-top: -33px;">Current Code</h2>
+          <div class="codestatementholder" id="currentcode">
           </div>
           <!-- <div class="addfitter">
             <div class='addreceiver' onclick='addreceiverbottom();'><div class="doadd"><img src="assets/plus.png" alt="blue plus sign" width="55px"></div><h3 style="margin-top: 17px; color: var(--main)">Add Block</h3></div>
@@ -137,7 +132,7 @@
     <img class="standaloneicon" id="check1" src="assets/greencheck.png" height="75px" alt="green check">
     <img class="standaloneicon" id="check2" src="assets/greencheck.png" height="75px" alt="green check">
     <img class="standaloneicon" id="check3" src="assets/greencheck.png" height="75px" alt="green check"> -->
-    <script src="../js/linkedlist.js"></script>
+    <script src="../js/bstmap.js"></script>
 
   </body>
 </html>
