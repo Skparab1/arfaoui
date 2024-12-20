@@ -853,6 +853,13 @@ async function runadd(data){
 
     value1 = parseInt(value1);
 
+    if (numbersofar.includes(value1)) {
+        alert("Key already in hashmap, so nothing changes!");
+        return 0;
+    }
+
+    numbersofar.push(value1);
+
     let hashed = dohash(value1);
 
     if (univlst[hashed] == "None"){
@@ -982,6 +989,8 @@ let statements = [
 ];
 
 let f1statements = 0;
+
+let numbersofar = [];
 
 let currentcode = [];
 

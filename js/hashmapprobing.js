@@ -950,6 +950,14 @@ async function runadd(data, forceval=null){
         value1 = parseInt(value1);
     }
 
+    if (numbersofar.includes(value1)) {
+        alert("Key already in hashmap, so nothing changes!");
+        return 0;
+    }
+
+    numbersofar.push(value1);
+
+
     // alert("trying to add", value1);
     console.log("trying to add", value1);
 
@@ -1166,6 +1174,8 @@ let statements = [
 let f1statements = 0;
 
 let currentcode = [];
+
+let numbersofar = [];
 
 adddropblock();
 
