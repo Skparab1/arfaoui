@@ -72,7 +72,7 @@ function drawnode(lst, index, x, y, content){
       
     // put the value into the element
     div.innerHTML = `
-    <input id='val${thisnum}' type='text' class='nodeval' value='${content}' oninput="modvalue(${thisnum});" disabled>
+    <input id='val${thisnum}' type='text' class='nodeval' value='${content}' style='font-size: 25px; margin-top: 5px;' oninput="modvalue(${thisnum});" disabled>
     `;
 
     // position the element
@@ -456,7 +456,10 @@ function drop(ev) {
 
         let type = ""
         let repopulatet = 0;
-        if (indata1.includes("dict[")){
+        if (indata1.includes("del")){
+            type = "del";
+            repopulatet = 1;
+        } else {
             type = "add";
             repopulatet = 0;
         }
@@ -734,6 +737,8 @@ async function runall(){
             let cd;
             if (datanow[1] == "add"){
                 cd = await runadd(datanow);
+            } else if (datanow[1] == "del"){
+                cd = await rundel(datanow);
             }
             if (cd == 1){
                 // something errored
@@ -805,6 +810,8 @@ async function stepforward(){
         let cd;
         if (datanow[1] == "add"){
             cd = await runadd(datanow);
+        } else if (datanow[1] == "del"){
+            cd = await rundel(datanow);
         }
 
         if (cd == 1){
@@ -843,8 +850,16 @@ async function runadd(data){
 
     let values = data[2];
 
-    // there should be one values
+    // there should be two values
     let value1 = get(values[0]).value;
+
+
+    let valuetoput;
+    if (get(values[1]) === null){
+        valuetoput = "None";
+    } else {
+        valuetoput = get(values[1]).value;
+    }
 
     if (isNaN(parseInt(value1))){
         alert("This demo hash function only accepts integers!");
@@ -853,19 +868,34 @@ async function runadd(data){
 
     value1 = parseInt(value1);
 
-    if (numbersofar.includes(value1)) {
-        alert("Key already in hashmap, so nothing changes!");
-        return 0;
-    }
-
-    numbersofar.push(value1);
-
     let hashed = dohash(value1);
 
-    if (univlst[hashed] == "None"){
-        univlst[hashed] = String(value1);
+
+    if (numbersofar.includes(value1)) {
+        // go through the thing and then replace
+        let oldstuff = univlst[hashed];
+
+        oldstuff = oldstuff.split(",");
+
+        let i = 0;
+        while (i < oldstuff.length) {
+            let splitsubj = oldstuff[i].split(" : ");
+            if (splitsubj[0] == String(value1)){
+                oldstuff[i] = String(value1)+" : "+valuetoput;
+            }
+
+            i += 1;
+        }
+
+        univlst[hashed] = oldstuff.join(',');
     } else {
-        univlst[hashed] += ","+String(value1);
+        numbersofar.push(value1);
+        
+        if (univlst[hashed] == "None"){
+            univlst[hashed] = String(value1)+" : "+valuetoput;
+        } else {
+            univlst[hashed] += ","+String(value1)+" : "+valuetoput;
+        }
     }
 
     glownodeyellow(univlst.length-1);
@@ -886,6 +916,71 @@ async function runadd(data){
 
     return 0;
 }
+
+
+
+async function rundel(data){
+
+    let values = data[2];
+
+    // there should be two values
+    let value1 = get(values[0]).value;
+
+    console.log(numbersofar);
+
+    if (!numbersofar.includes(parseInt(value1))){
+        alert("Value does not exist in Hashmap!"+value1);
+        return 1;
+    }
+
+    value1 = parseInt(value1);
+
+    let hashed = dohash(value1);
+
+
+    // go through the thing and then replace
+    let oldstuff = univlst[hashed];
+
+    oldstuff = oldstuff.split(",");
+
+    let i = 0;
+    while (i < oldstuff.length) {
+        let splitsubj = oldstuff[i].split(" : ");
+        if (splitsubj[0] == String(value1)){
+            oldstuff[i] = "None";
+        }
+
+        i += 1;
+    }
+
+    const index = numbersofar.indexOf(value1);
+    if (index > -1) {
+        numbersofar.splice(index, 1);
+    }
+
+
+    univlst[hashed] = oldstuff.join(',');
+
+    glownodeyellow(univlst.length-1);
+    glownodeyellow(univlst.length-2);
+
+    drawlist(univlst);
+
+    glownodeyellow(univlst.length-1);
+    glownodeyellow(univlst.length-2);
+
+    if (runspeed == "normal"){
+        await sleep();
+    }
+
+    drawlist(univlst);
+
+    glownodeyellow(hashed);
+
+    return 0;
+}
+
+
 
 function dohash(num){
     return ((hasha*num + hashb) % hashp) % 10;
@@ -980,12 +1075,15 @@ let torepopulate = 0;
 
 function getstatementbank(i){
     if (i == 0){
-        return `dict[${getlittleinput()}] = None`;
+        return `dict[${getlittleinput()}] = ${getlittleinput()}`;
+    } else {
+        return `del dict[${getlittleinput()}]`;
     }
 }
 
 let statements = [
-    `dict[${getlittleinput()}] = None`,
+    `dict[${getlittleinput()}] = ${getlittleinput()}`,
+    `del dict[${getlittleinput()}]`,
 ];
 
 let f1statements = 0;
