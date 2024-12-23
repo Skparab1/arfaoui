@@ -914,23 +914,56 @@ function rehash(randomhash, increasefactor){
         hashb = getRandNum(0,hashp);    
     }
 
+    let probevalue = get("probingmethod").value;
+    let probestuff = "";
+
+    if (probevalue == "quadratic"){
+        probestuff = `
+            <option value="quadratic">Quadratic</option>
+            <option value="linear">Linear</option>
+        `;
+    } else {
+        probestuff = `
+            <option value="linear">Linear</option>
+            <option value="quadratic">Quadratic</option>
+        `;
+    }
+
     get("hashfunction").innerHTML = `MAD Hash Function: h(k) = [(
-        <span style="color: var(--main);">${hasha}</span>
+        <input id=hasha class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hasha} onchange="changehash();">
         k + 
-        <span style="color: var(--main);">${hashb}</span>
+        <input id=hashb class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hashb} onchange="changehash();">
         ) mod 
-        <span style="color: var(--main);">${hashp}</span>
-        ] mod ${univlst.length}, Quadratic probing`;
+        <input id=hashp class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hashp} onchange="changehash();">
+        ] mod ${newunivlst.length}, 
+        <select name="probingmethod" id="probingmethod" class="littleinput" style="width: 105px;" onchange="changehash();">
+        ${probestuff}
+        </select> Probing
+        `;
 
 
     let oldlst = univlst;
     univlst = newunivlst;
 
+    // reset numbersofar 
+    numbersofar = [];
+
+    // alert("created new hash, going to rummage through");
+
     i = 0;
     while (i < oldlst.length){
-        runadd(null, parseInt(oldlst[i]));
+        // console.log("actual subj is",oldlst[i]);
+        if (oldlst[i] != "None"){
+            let subj = oldlst[i].split(" : ");
+            // console.log("converted with", subj[1], "and", subj[0]);
+            // alert("converted with check console");
+            runadd([null, subj[1]], parseInt(subj[0]));
+            // console.log("trying to add ",parseInt(subj[0]),subj[1])
+        }
         i += 1;
     }
+
+    // alert("finished converting");
 
     runspeed = storespeed;
 }
@@ -942,6 +975,7 @@ async function runadd(data, forceval=null){
     let value1;
     if (forceval != null){
         value1 = forceval;
+        values = data;
     } else {
         values = data[2];
 
@@ -956,12 +990,18 @@ async function runadd(data, forceval=null){
         value1 = parseInt(value1);
     }
 
+    // console.log("value index bucket", value1);
+    // alert("check console");
+
     let valuetoput;
     if (get(values[1]) === null){
         valuetoput = "None";
     } else {
         valuetoput = get(values[1]).value;
     }
+
+    // console.log("value to put", valuetoput);
+    // alert("check console");
 
     let hashed = dohash(value1);
 
@@ -1010,6 +1050,13 @@ async function runadd(data, forceval=null){
             console.log("looking to insert",value1,"at",hashed);
 
             console.log("univlst",univlst);
+            
+            // Array(10) [ "None", "None", "None", "None", "None", "None", "None", "None", "None", "None" ]
+            // hashmapprobing.js:1023:21
+            // glownode demo hashmapprobing.js:723:17
+            // looking to insert NaN at NaN hashmapprobing.js:1021:21
+            // univlst 
+
 
             
             if (runspeed != "expedited"){
@@ -1019,8 +1066,12 @@ async function runadd(data, forceval=null){
 
             drawlist(univlst);
 
-            
-            hashed += i*i;
+            if (get("probingmethod").value == "quadratic"){
+                hashed += i*i;
+            } else {
+                hashed += 1;
+            }
+
             hashed = hashed % univlst.length;
             i += 1;
         }
@@ -1092,7 +1143,7 @@ async function rundel(data, forceval=null){
         }
 
     } else {
-        alert("Value does not exist in Hashmap!"+value1);
+        alert("Value does not exist in Hashmap!");
         return 1;
     }
 
@@ -1132,12 +1183,12 @@ function changehash(){
 
     runspeed = "expedited";
 
-    let newhasha = get("hasha").value;
-    let newhashb = get("hashb").value;
-    let newhashp = get("hashp").value;
+    let newhasha = parseInt(get("hasha").value);
+    let newhashb = parseInt(get("hashb").value);
+    let newhashp = parseInt(get("hashp").value);
 
-    if (isNaN(parseInt(newhasha)) || isNaN(parseInt(newhashb)) || isNaN(parseInt(newhashp))){
-        alert("Hash function parameters must be integers!");
+    if (isNaN(parseInt(newhasha)) || isNaN(parseInt(newhashb)) || isNaN(parseInt(newhashp)) || parseInt(newhashp) == 0){
+        alert("Hash function parameters must be integers, and P value cannot be 0!");
         get("hasha").value = hasha;
         get("hashb").value = hashb;
         get("hashk").value = hashk;
@@ -1148,12 +1199,20 @@ function changehash(){
     hashb = newhashb;
     hashp = newhashp;
 
+    // alert("just changed values");
+
+
     rehash(false, 1);
 
     runspeed = storespeed;
 }
 
 function dohash(num){
+    // console.log("did a hash for ",num,"a=",hasha,"b=",hashb,"p=",hashp);
+    // console.log("to return 1",(hasha*num));
+    // console.log("to return 2",(hasha*num + hashb));
+    // console.log("to return 3",((hasha*num + hashb) % hashp));
+    // console.log("to return 4",((hasha*num + hashb) % hashp) % univlst.length);
     return ((hasha*num + hashb) % hashp) % univlst.length;
 }
 
@@ -1188,12 +1247,17 @@ let hasha = getRandNum(1,hashp);
 let hashb = getRandNum(0,hashp);
 
 get("hashfunction").innerHTML = `MAD Hash Function: h(k) = [(
-    <span style="color: var(--main);">${hasha}</span>
+    <input id=hasha class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hasha} onchange="changehash();">
     k + 
-    <span style="color: var(--main);">${hashb}</span>
+    <input id=hashb class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hashb} onchange="changehash();">
     ) mod 
-    <span style="color: var(--main);">${hashp}</span>
-    ] mod ${univlst.length}, Quadratic probing`;
+    <input id=hashp class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hashp} onchange="changehash();">
+    ] mod ${univlst.length}, 
+    <select name="probingmethod" id="probingmethod" class="littleinput" style="width: 105px;" onchange="changehash();">
+        <option value="quadratic">Quadratic</option>
+        <option value="linear">Linear</option>
+    </select> Probing
+    `;
 
 // open the "how to use" if its the first time this user has opened this
 let bt1 = localStorage.getItem('binarytree');
