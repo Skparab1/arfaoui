@@ -983,7 +983,7 @@ async function runadd(data, forceval=null){
         value1 = get(values[0]).value;
 
         if (isNaN(parseInt(value1))){
-            alert("This demo hash function only accepts integers!");
+            alert("This MAD hash function only accepts integers!");
             return 1;
         }
 
@@ -1119,7 +1119,7 @@ async function rundel(data, forceval=null){
         value1 = get(values[0]).value;
 
         if (isNaN(parseInt(value1))){
-            alert("This demo hash function only accepts integers!");
+            alert("This MAD hash function only accepts integers!");
             return 1;
         }
 
@@ -1191,7 +1191,7 @@ function changehash(){
         alert("Hash function parameters must be integers, and P value cannot be 0!");
         get("hasha").value = hasha;
         get("hashb").value = hashb;
-        get("hashk").value = hashk;
+        get("hashp").value = hashp;
         return;
     }
 

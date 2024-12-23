@@ -33,8 +33,12 @@ function drawlist(lst){
             let lstels = String(lst[i]).split(",");
 
             let j = 0;
+            let downindent = 0;
             while (j < lstels.length){
-                drawnode(lst, j, startx, starty+50*j, lstels[j]);
+                if (lstels[j] != "None"){
+                    drawnode(lst, j, startx, starty+50*downindent, lstels[j]);
+                    downindent += 1;
+                }
                 j += 1;
             }
         }
@@ -538,9 +542,9 @@ function repopulateall(){
     }
 }
 
-function hash(input){
+// function hash(input){
 
-}
+// }
 
 function repopulate(i){
     let el = document.getElementById("receiver"+i);
@@ -846,13 +850,29 @@ async function stepforward(){
 }
 
 
-async function runadd(data){
+async function runadd(data, forceval=null){
 
-    let values = data[2];
+    let values;
+    let value1;
+    if (forceval != null){
+        value1 = forceval;
+        values = data;
+    } else {
+        values = data[2];
 
-    // there should be two values
-    let value1 = get(values[0]).value;
+        // there should be one values
+        value1 = get(values[0]).value;
 
+        if (isNaN(parseInt(value1))){
+            alert("This MAD hash function only accepts integers!");
+            return 1;
+        }
+
+        value1 = parseInt(value1);
+    }
+
+    // console.log("value index bucket", value1);
+    // alert("check console");
 
     let valuetoput;
     if (get(values[1]) === null){
@@ -862,7 +882,7 @@ async function runadd(data){
     }
 
     if (isNaN(parseInt(value1))){
-        alert("This demo hash function only accepts integers!");
+        alert("This MAD hash function only accepts integers!");
         return 1;
     }
 
@@ -982,6 +1002,90 @@ async function rundel(data){
 
 
 
+function rehash(randomhash, increasefactor){
+
+    let newunivlst = [];
+    let i = 0;
+    while (i < increasefactor*univlst.length){
+        newunivlst.push("None");
+        i += 1;
+    }
+
+    // make a new hash function
+
+    if (randomhash){
+        hashp = getRandPrime(1,102);
+        hasha = getRandNum(1,hashp);
+        hashb = getRandNum(0,hashp);    
+    }
+
+    get("hashfunction").innerHTML = `MAD Hash Function: h(k) = [(
+        <input id=hasha class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hasha} onchange="changehash();">
+        k + 
+        <input id=hashb class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hashb} onchange="changehash();">
+        ) mod 
+        <input id=hashp class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hashp} onchange="changehash();">
+        ] mod 10
+        `;
+
+
+    let oldlst = univlst;
+    univlst = newunivlst;
+
+    // reset numbersofar 
+    numbersofar = [];
+
+    // alert("created new hash, going to rummage through");
+
+    i = 0;
+    while (i < oldlst.length){
+        console.log("actual subj is",oldlst[i]);
+        if (oldlst[i] != "None"){
+            splitstr = oldlst[i].split(",");
+            let j = 0;
+            while (j < splitstr.length){
+                let subj = splitstr[j].split(" : ");
+                // console.log("converted with", subj[1], "and", subj[0]);
+                // alert("converted with check console");
+                runadd([null, subj[1]], parseInt(subj[0]));
+                // console.log("trying to add ",parseInt(subj[0]),subj[1])
+                j += 1;
+            }
+        }
+        i += 1;
+    }
+
+    // alert("finished converting");
+}
+
+
+function changehash(){
+    // check each of the input
+
+    let newhasha = parseInt(get("hasha").value);
+    let newhashb = parseInt(get("hashb").value);
+    let newhashp = parseInt(get("hashp").value);
+
+    if (isNaN(parseInt(newhasha)) || isNaN(parseInt(newhashb)) || isNaN(parseInt(newhashp)) || parseInt(newhashp) == 0){
+        alert("Hash function parameters must be integers, and P value cannot be 0!");
+        get("hasha").value = hasha;
+        get("hashb").value = hashb;
+        get("hashp").value = hashp;
+        return;
+    }
+
+    hasha = newhasha;
+    hashb = newhashb;
+    hashp = newhashp;
+
+    // alert("just changed values");
+
+
+    rehash(false, 1);
+
+}
+
+
 function dohash(num){
     return ((hasha*num + hashb) % hashp) % 10;
 }
@@ -1011,7 +1115,16 @@ let hashp = getRandPrime(1,102);
 let hasha = getRandNum(1,hashp);
 let hashb = getRandNum(0,hashp);
 
-get("hashfunction").textContent = `MAD Hash Function: h(k) = [(${hasha}k + ${hashb}) mod ${hashp}] mod 10`
+
+get("hashfunction").innerHTML = `MAD Hash Function: h(k) = [(
+    <input id=hasha class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hasha} onchange="changehash();">
+    k + 
+    <input id=hashb class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hashb} onchange="changehash();">
+    ) mod 
+    <input id=hashp class="littleinput" style="color: var(--main); width: 25px; margin: 0px;" value=${hashp} onchange="changehash();">
+    ] mod 10
+    `;
+
 
 // open the "how to use" if its the first time this user has opened this
 let bt1 = localStorage.getItem('binarytree');
