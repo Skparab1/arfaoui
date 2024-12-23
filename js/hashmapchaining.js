@@ -871,7 +871,7 @@ async function runadd(data){
     let hashed = dohash(value1);
 
 
-    if (numbersofar.includes(value1)) {
+    if (numbersofar.includes(parseInt(value1))) {
         // go through the thing and then replace
         let oldstuff = univlst[hashed];
 

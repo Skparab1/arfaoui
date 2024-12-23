@@ -65,7 +65,7 @@ function drawnode(lst, index, x, y, content){
       
     // put the value into the element
     div.innerHTML = `
-    <input id='val${thisnum}' type='text' class='nodeval' value='${content}' disabled>
+    <input id='val${thisnum}' type='text' class='nodeval' style='font-size: 25px; margin-top: 5px;' value='${content}' disabled>
     `;
 
     // position the element
@@ -483,10 +483,12 @@ function drop(ev) {
 
         codeel = get(data);
         let indata1 = String(codeel.innerHTML);
-
         let type = ""
         let repopulatet = 0;
-        if (indata1.includes("dict[")){
+        if (indata1.includes("del")){
+            type = "del";
+            repopulatet = 1;
+        } else {
             type = "add";
             repopulatet = 0;
         }
@@ -772,6 +774,8 @@ async function runall(){
             let cd;
             if (datanow[1] == "add"){
                 cd = await runadd(datanow);
+            } else if (datanow[1] == "del"){
+                cd = await rundel(datanow);
             }
             if (cd == 1){
                 // something errored
@@ -854,6 +858,8 @@ async function stepforward(){
         let cd;
         if (datanow[1] == "add"){
             cd = await runadd(datanow);
+        } else if (datanow[1] == "del"){
+            cd = await rundel(datanow);
         }
 
         if (cd == 1){
@@ -950,64 +956,79 @@ async function runadd(data, forceval=null){
         value1 = parseInt(value1);
     }
 
-    if (numbersofar.includes(value1)) {
-        alert("Key already in hashmap, so nothing changes!");
-        return 0;
+    let valuetoput;
+    if (get(values[1]) === null){
+        valuetoput = "None";
+    } else {
+        valuetoput = get(values[1]).value;
     }
-
-    numbersofar.push(value1);
-
-
-    // alert("trying to add", value1);
-    console.log("trying to add", value1);
-
-    
 
     let hashed = dohash(value1);
 
-    // probe through it
-
-    // alert("dohash done");
-
-
-    if (univlst.indexOf("None") == -1){ // no more space
-        rehash(true, 2);
-    }
-
-    // alert("possible rehash done");
+    if (numbersofar.includes(parseInt(value1))) {
+        // find it and replace
 
 
-    i = 1;
-    currentlyprobing = true;
-    while (univlst[hashed] != "None"){
-        // once it is == None we can continue
-        // alert("probed a bit");
-        drawdemonode(hashed, value1);
-        glownodered("demo");
+        let i = 0;
+        while (i < univlst.length) {
+            let splitsubj = univlst[i].split(" : ");
+            if (splitsubj[0] == String(value1)){
+                univlst[i] = String(value1)+" : "+valuetoput;
+            }
 
-        // alert("probing for something");
-        console.log("looking to insert",value1,"at",hashed);
-
-        console.log("univlst",univlst);
-
-        
-        if (runspeed != "expedited"){
-            await sleep(2500);
-            glownodered("demo");
+            i += 1;
         }
 
-        drawlist(univlst);
+    } else {
+        numbersofar.push(value1);
 
-        
-        hashed += i*i;
-        hashed = hashed % univlst.length;
-        i += 1;
+
+        // alert("trying to add", value1);
+        console.log("trying to add", value1);
+
+        // probe through it
+
+        // alert("dohash done");
+
+
+        if (univlst.indexOf("None") == -1){ // no more space
+            rehash(true, 2);
+        }
+
+        // alert("possible rehash done");
+
+
+        i = 1;
+        currentlyprobing = true;
+        while (univlst[hashed] != "None"){
+            // once it is == None we can continue
+            // alert("probed a bit");
+            drawdemonode(hashed, value1);
+            glownodered("demo");
+
+            // alert("probing for something");
+            console.log("looking to insert",value1,"at",hashed);
+
+            console.log("univlst",univlst);
+
+            
+            if (runspeed != "expedited"){
+                await sleep(2500);
+                glownodered("demo");
+            }
+
+            drawlist(univlst);
+
+            
+            hashed += i*i;
+            hashed = hashed % univlst.length;
+            i += 1;
+        }
+
+        // this is the position to insert, continue.
+        univlst[hashed] = String(value1)+" : "+valuetoput;
+    
     }
-
-    // this is the position to insert, continue.
-    univlst[hashed] = String(value1);
-
-    // add animations if possible
 
     
 
@@ -1031,6 +1052,77 @@ async function runadd(data, forceval=null){
 
     return 0;
 }
+
+
+
+async function rundel(data, forceval=null){
+
+    let values;
+    let value1;
+    if (forceval != null){
+        value1 = forceval;
+    } else {
+        values = data[2];
+
+        // there should be one values
+        value1 = get(values[0]).value;
+
+        if (isNaN(parseInt(value1))){
+            alert("This demo hash function only accepts integers!");
+            return 1;
+        }
+
+        value1 = parseInt(value1);
+    }
+
+    let hashed = dohash(value1);
+
+    if (numbersofar.includes(parseInt(value1))) {
+        // find it and replace
+
+
+        let i = 0;
+        while (i < univlst.length) {
+            let splitsubj = univlst[i].split(" : ");
+            if (splitsubj[0] == String(value1)){
+                univlst[i] = "None";
+            }
+
+            i += 1;
+        }
+
+    } else {
+        alert("Value does not exist in Hashmap!"+value1);
+        return 1;
+    }
+
+    const index = numbersofar.indexOf(value1);
+    if (index > -1) {
+        numbersofar.splice(index, 1);
+    }
+    
+
+    glownodeyellow(univlst.length-1);
+    glownodeyellow(univlst.length-2);
+
+    drawlist(univlst);
+
+    glownodeyellow(univlst.length-1);
+    glownodeyellow(univlst.length-2);
+
+    if (runspeed == "normal"){
+        await sleep();
+    }
+
+    drawlist(univlst);
+
+    glownodeyellow(hashed);
+
+    currentlyprobing = false;
+
+    return 0;
+}
+
 
 
 function changehash(){
@@ -1161,14 +1253,18 @@ function checkinput(id){
 let torepopulate = 0;
 
 
+
 function getstatementbank(i){
     if (i == 0){
-        return `dict[${getlittleinput()}] = None`;
+        return `dict[${getlittleinput()}] = ${getlittleinput()}`;
+    } else {
+        return `del dict[${getlittleinput()}]`;
     }
 }
 
 let statements = [
-    `dict[${getlittleinput()}] = None`,
+    `dict[${getlittleinput()}] = ${getlittleinput()}`,
+    `del dict[${getlittleinput()}]`,
 ];
 
 let f1statements = 0;
