@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
+    <link rel="icon" type="image/x-ic on" href="../assets/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Finlandica&display=swap" rel="stylesheet"> 
   </head>
   <body>
@@ -112,14 +112,16 @@
       <div class="close" onclick="closeel('randomtree'); closescreen();">Cancel</div>
     </div>
 
-    <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: auto; margin-bottom: 50px;">
+    <div class="largenotif" id="instructions" style="top: 100%; opacity: 0; height: 65%; margin-bottom: 50px; overflow-y: scroll;">
       <h1 style='font-size: 25px; margin: 10px;'>How to use</h1>
-      <h5 style='font-size: 15px; margin: 10px;'>1. Modify the list by hovering over an element and using the "left/right" buttons to add elements and "delete" button to remove elements.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>2. Drag blocks of code from the code bank to the current code.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>3. Click the digits in blue to change the list contents and function inputs.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>4. Press "run all" to run all the code instantly.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>5. Press "slowly run all" to run the code with delays between each block.</h5>
-      <h5 style='font-size: 15px; margin: 10px;'>6. Press "step" to run one one block of code at a time.</h5>
+      <h5 style='font-size: 15px; margin: 10px;'>1. Modify the list using the visualization</h5>
+      <video src="../assets/instructions/list/instruction1.mp4" style="width: 70%; border: 5px solid var(--secondary);" autoplay loop></video>
+      <h5 style='font-size: 15px; margin: 10px;'>2. Drag code blocks and modify contents</h5>
+      <video src="../assets/instructions/list/instruction2.mp4" style="width: 70%; border: 5px solid var(--secondary);" autoplay loop></video>
+      <h5 style='font-size: 15px; margin: 10px;'>3. Run code at various speeds</h5>
+      <video src="../assets/instructions/list/instruction3.mp4" style="width: 70%; border: 5px solid var(--secondary);" autoplay loop></video>
+
+
       <div class="close" onclick="closeinstructions(); closescreen();">Close</div>
     </div>
 
